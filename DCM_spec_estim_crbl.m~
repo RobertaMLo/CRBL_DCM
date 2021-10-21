@@ -1,4 +1,4 @@
-function DCM_predictive_crbl(my_folder_path,init,nsub, estimate)
+function DCM_spec_estim_crbl(my_folder_path,init,nsub, estimate)
 % =========================================================================
 % Protocol to run a DCM analaysis
 % =========================================================================
@@ -61,6 +61,8 @@ b(m1,crbl,end) = 1;
 b(pmc,crbl,end) = 1;
 b(sma,crbl,end) = 1;
 b(crbl,crbl,end) = 1;
+
+
 
 
 % C-matrix

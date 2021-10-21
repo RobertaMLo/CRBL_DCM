@@ -26,7 +26,7 @@ TR = 1.25;   % Repetition time (secs)
 TE = 0.04;  % Echo time (secs)
 
 % Experiment settings
-nregions    = 5;
+nregions    = 4;
 nconditions = 2;
 
 % Index of each condition in the DCM
@@ -45,7 +45,7 @@ crbl=1; m1=2; pmc=3; sma=4; v1=5;
 % 0 = switched off connection --> FIXED TO PRIOR!
 a = ones(nregions,nregions);
 
-a(crbl,pmc) = 0;
+a(pmc,crbl) = 0;
 a(v1,crbl) = 0;
 a(v1,m1) = 0;
 a(v1,pmc) = 0;
@@ -57,7 +57,6 @@ a(v1,sma) = 0;
 % u = task, pictures, words
 b(:,:,GEForce) = zeros(nregions); %Force modulation
 b(v1,crbl,end) = 1;
-b(m1,crbl,end) = 1;
 b(pmc,crbl,end) = 1;
 b(sma,crbl,end) = 1;
 b(crbl,crbl,end) = 1;
@@ -83,19 +82,11 @@ for subject = init:nsub
         
         % Load ROIs. It provides the EXPERIMENTAL TIME SERIES
         %(_Fadj for F-contrast adjusted images)
-         f = {
-%             fullfile(glm_dir,'VOI_CRBL_PM_Fadj_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
-%             fullfile(glm_dir,'VOI_M1_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_PMC_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
-            
-            fullfile(glm_dir,'VOI_CRBL_R_A_M.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
-            fullfile(glm_dir,'M1_L_M.mat');
-            fullfile(glm_dir,'PMC_L_M.mat');
-            fullfile(glm_dir,'SMA_L_M.mat');
-            fullfile(glm_dir,'V1_BIL_M.mat');
-            
+        f = {
+            fullfile(glm_dir,'VOI_CRBL_PM_Fadj_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
+            fullfile(glm_dir,'VOI_M1_Fadj_1.mat');
+            fullfile(glm_dir,'VOI_PMC_Fadj_1.mat');
+            fullfile(glm_dir,'VOI_SMA_Fadj_1.mat')
             };
         
         for r = 1:length(f)

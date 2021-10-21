@@ -1,4 +1,4 @@
-function DCM_predictive_crbl(my_folder_path,init,nsub, estimate)
+function DCM_spec_estim_crbl(my_folder_path,init,nsub, estimate)
 % =========================================================================
 % Protocol to run a DCM analaysis
 % =========================================================================
@@ -62,13 +62,20 @@ b(pmc,crbl,end) = 1;
 b(sma,crbl,end) = 1;
 b(crbl,crbl,end) = 1;
 
-
 % C-matrix
 c = zeros(nregions,nconditions);
 c(v1,GE) = 1;
 
 % D-matrix (disabled but must be specified)
 d = zeros(nregions,nregions,0);
+
+disp("======================= Matrices: ")
+disp("A: ")
+a
+disp("B: ")
+b
+disp("C: ")
+c
 
 for subject = init:nsub
     disp('*********** Specifying... ***********')
@@ -90,11 +97,11 @@ for subject = init:nsub
 %             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
 %             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
             
-            fullfile(glm_dir,'VOI_CRBL_R_A_M.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
-            fullfile(glm_dir,'M1_L_M.mat');
-            fullfile(glm_dir,'PMC_L_M.mat');
-            fullfile(glm_dir,'SMA_L_M.mat');
-            fullfile(glm_dir,'V1_BIL_M.mat');
+            fullfile(glm_dir,'VOI_VOI_CRBL_R_A_M_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
+            fullfile(glm_dir,'VOI_M1_L_M_1.mat');
+            fullfile(glm_dir,'VOI_PMC_L_M_1.mat');
+            fullfile(glm_dir, 'VOI_SMA_L_M_1.mat');
+            fullfile(glm_dir,'VOI_V1_BIL_M_1.mat');
             
             };
         
