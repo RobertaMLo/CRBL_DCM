@@ -11,12 +11,12 @@ clc
 clear
 close
 %% General Parameters
-parent_dir = '/Users/robertalorenzi/Desktop/Ongoing/DCM/DCM4CRBL/motor_subjs';
+parent_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj';
 
 thr_val = 0.001; %IF some regions not included with this thr, increase!
 
 start_subj = 1;
-nsubj = 1;
+nsubj = 6;
 F_contr_adj = 1;
 contr_index  = 2;
 
@@ -40,7 +40,7 @@ cd(my_path)
 
 %% MOTOR CORTEX
 disp('=========================== MOTOR CORTEX ===========================')
-VOI_name = 'M1_L_T_MNI';
+VOI_name = 'M1_L_MNI';
 
 center_vec = [-31 -29 55]; %FSLeyes - Juelich Histological Atlas - BA4aL
 
@@ -51,7 +51,7 @@ cd(my_path)
 
 %% SUPPLEMENTARY MOTOR AREA
 disp('===================== SUPPLEMENTARY MOTOR AREA =====================')
-VOI_name = 'SMA_L_T_MNI';
+VOI_name = 'SMA_L_MNI';
 
 center_vec = [-4 -4 58]; %FSLeyes - Juelich Histological Atlas - BA6L / Harvard-OXford cortical structure: 84% SMA
 
@@ -75,7 +75,7 @@ cd(my_path)
 
 %% VISUAL CORTEX
 disp('=========================== VISUAL CORTEX ===========================')
-VOI_name = 'V1_BIL_T_MNI';
+VOI_name = 'V1_BIL_MNI';
 
 center_vec = [0 -96 7]; %FSLeyes - Harvard Oxford Atlas
 sphere_rad_v1 = 12; %Bilateral 

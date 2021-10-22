@@ -14,7 +14,7 @@ close all
 current_dir = pwd;
 
 % 
-% parent_dir = '/Users/robertalorenzi/Desktop/Ongoing/DCM/DCM4CRBL/motor_subjs';
+parent_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj'
 % contr_name = 'F_AE_3mod';
 % contr_mat = eye(4);
 % del_contr = 1;
@@ -23,7 +23,6 @@ current_dir = pwd;
 % 
 % F_contrast_def(parent_dir, start_subj, nsubj, contr_name, contr_mat, del_contr)
 
-parent_dir = '/Users/robertalorenzi/Desktop/Ongoing/DCM/DCM4CRBL/motor_subjs';
 contr_name = 'T_AE';
 contr_mat = [1 0 0 0 0 0 0 0 0 0 0 0];
 del_contr = 0;

@@ -1,4 +1,4 @@
-function DCM_spec_estim_crbl(my_folder_path,init,nsub, estimate)
+function DCM_spec_estim_crbl(my_folder_path, dcm_id, init, nsub, estimate)
 % =========================================================================
 % Protocol to run a DCM analaysis
 % =========================================================================
@@ -17,7 +17,7 @@ function DCM_spec_estim_crbl(my_folder_path,init,nsub, estimate)
 
 %   estimate:   Logical. true to specify DCM, false to estimate DCM    
 %   -----------------------------------------------------------------------
-%   Last update: 07 Sept 2021;
+%   Last update: 22 Oct 2021;
 %   -----------------------------------------------------------------------
 
 %% CRBL
@@ -56,7 +56,6 @@ a(v1,sma) = 0;
 %B = df/dxdu -> change due to external input u
 % u = task, pictures, words
 b(:,:,GEForce) = zeros(nregions); %Force modulation
-b(v1,crbl,end) = 1;
 b(m1,crbl,end) = 1;
 b(pmc,crbl,end) = 1;
 b(sma,crbl,end) = 1;
@@ -97,11 +96,11 @@ for subject = init:nsub
 %             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
 %             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
             
-            fullfile(glm_dir,'VOI_VOI_CRBL_R_A_M_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
-            fullfile(glm_dir,'VOI_M1_L_M_1.mat');
-            fullfile(glm_dir,'VOI_PMC_L_M_1.mat');
-            fullfile(glm_dir, 'VOI_SMA_L_M_1.mat');
-            fullfile(glm_dir,'VOI_V1_BIL_M_1.mat');
+            fullfile(glm_dir,'VOI_CRBL_R_A_MNI_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
+            fullfile(glm_dir,'VOI_M1_L_MNI_1.mat');
+            fullfile(glm_dir,'VOI_PMC_L_MNI_1.mat');
+            fullfile(glm_dir, 'VOI_SMA_L_MNI_1.mat');
+            fullfile(glm_dir,'VOI_V1_BIL_MNI_1.mat');
             
             };
         
@@ -115,13 +114,16 @@ for subject = init:nsub
         
         % Select whether to include each condition from the design matrix
         % (GE, GEF1, GEF2, GEF3, GEF4)
-        include = [1 1 0 0 0];
+ 
+        
+        include = [1 0 1 0 0]; %GFE2
         
         % Specify. Corresponds to the series of questions in the GUI.
         % TIP: IF YOU MUST ANSWER QUESTIONS IN GUI, CREATE A STRUCTURE IN
         % SCRIPT WITH THE ANSWER AND CALL FUNCTION _SPECIFY TO KEEP THE SCRIPT
         % COMPLETELY AUTHOMATIC.
-        dcm_id = char(strrep(string(date),'-','_')); %current date as ID
+        dcm_date = char(strrep(string(date),'-','_'));
+        dcm_id = horzcat(dcm_date,'_', dcm_id); %current date as ID
         s = struct();
         s.name       = dcm_id;
         s.u          = include;                 % Conditions
