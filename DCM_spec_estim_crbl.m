@@ -22,8 +22,9 @@ function DCM_spec_estim_crbl(my_folder_path, dcm_id, init, nsub, estimate)
 
 %% CRBL
 disp('=========================== CRBL ============================')
-TR = 1.25;   % Repetition time (secs)
-TE = 0.04;  % Echo time (secs)
+% TR and TR from Adnan Paper
+TR = 2.5;   % Repetition time (secs)
+TE = 0.035;  % Echo time (secs)
 
 % Experiment settings
 nregions    = 5;
@@ -116,7 +117,7 @@ for subject = init:nsub
         % (GE, GEF1, GEF2, GEF3, GEF4)
  
         
-        include = [1 0 1 0 0]; %GFE2
+        include = [1 0 0 0 1]; %GFE3
         
         % Specify. Corresponds to the series of questions in the GUI.
         % TIP: IF YOU MUST ANSWER QUESTIONS IN GUI, CREATE A STRUCTURE IN
