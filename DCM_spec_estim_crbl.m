@@ -28,10 +28,10 @@ TE = 0.035;  % Echo time (secs)
 
 % Experiment settings
 nregions    = 5;
-nconditions = 2;
+nconditions = 1;
 
 % Index of each condition in the DCM
-GE=1; GEForce=2;
+GE=1; GEForce=1;
 
 % Index of each region in the DCM
 crbl=1; m1=2; pmc=3; sma=4; v1=5;
@@ -46,21 +46,21 @@ crbl=1; m1=2; pmc=3; sma=4; v1=5;
 % 0 = switched off connection --> FIXED TO PRIOR!
 a = ones(nregions,nregions);
 
-a(crbl,pmc) = 0;
-a(v1,crbl) = 0;
-a(v1,m1) = 0;
-a(v1,pmc) = 0;
-a(v1,sma) = 0;
+% a(crbl,pmc) = 0;
+% a(v1,crbl) = 0;
+% a(v1,m1) = 0;
+% a(v1,pmc) = 0;
+% a(v1,sma) = 0;
 
 
 %B-matrix
 %B = df/dxdu -> change due to external input u
 % u = task, pictures, words
-b(:,:,GEForce) = zeros(nregions); %Force modulation
-b(m1,crbl,end) = 1;
-b(pmc,crbl,end) = 1;
-b(sma,crbl,end) = 1;
-b(crbl,crbl,end) = 1;
+b(:,:) = zeros(nregions); %Force modulation
+% b(m1,crbl,end) = 1;
+% b(pmc,crbl,end) = 1;
+% b(sma,crbl,end) = 1;
+% b(crbl,crbl,end) = 1;
 
 % C-matrix
 c = zeros(nregions,nconditions);
@@ -117,7 +117,7 @@ for subject = init:nsub
         % (GE, GEF1, GEF2, GEF3, GEF4)
  
         
-        include = [1 0 0 0 1]; %GFE3
+        include = [1 0 0 0 0]; %GFE3
         
         % Specify. Corresponds to the series of questions in the GUI.
         % TIP: IF YOU MUST ANSWER QUESTIONS IN GUI, CREATE A STRUCTURE IN
@@ -152,6 +152,8 @@ for subject = init:nsub
        
         % Return to script directory
         cd(my_folder_path);
+        
+        clear dcm_id
         
     else
         disp('***************** No Data No Party **********************')

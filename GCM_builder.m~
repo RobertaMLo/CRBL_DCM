@@ -1,4 +1,4 @@
-function GCM = GCM_builder (path_to_save, DCM_name, start_sub, nsub)
+function GCM = GCM_builder (path_to_save, DCM_name, nsub)
 % =========================================================================
 % Protocol to build and save a GCM structure. GCM is a group DCM where each
 % row i corresponds to suj i and col j corresponds to DCM j. GCM dim =
@@ -16,7 +16,7 @@ function GCM = GCM_builder (path_to_save, DCM_name, start_sub, nsub)
 
 %   nsub:          Int. Number of Subjects icluded in the analysis.
 %   -----------------------------------------------------------------------
-%   Last update: 26th Oct 2021;
+%   Last update: 13t Sept 2021;
 %   -----------------------------------------------------------------------
 
 
@@ -30,14 +30,14 @@ GCM_names = {};
 
 c=1; %counter. c=c+1 if the subject exists
 
-for i = start_sub:nsub
+for i = start_su:nsub
     
     name = sprintf('S%d',i)
     sub_folder = fullfile(path_to_save,name);
     
     if isfolder(sub_folder)
         
-        dcms = spm_select('FPListRec', sub_folder, DCM_name);
+        dcms = spm_select('FPListRec',sub_folder, DCM_name);
         
         for j =1:size(dcms(:,1))
             GCM_names{c,j} = cellstr(dcms(j,:));
@@ -77,8 +77,7 @@ if tf
                 
     
     % Filenames -> DCM structures. Load DCM file name into cell array
-    %GCM = spm_dcm_load(string(GCM_names(:,1:13)));
-    GCM = spm_dcm_load(string(GCM_names))
+    GCM = spm_dcm_load(string(GCM_names(:,1:13)));
     
     % Estimate DCMs. Fitting of each DCM with the data (1st level). This
     % desn't affect original data in each subj folder.
