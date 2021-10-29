@@ -13,11 +13,12 @@ function GCM = GCM_builder (path_to_save, GCM_filename, DCM_name, start_sub, nsu
 %   GCM_filename:  String. name of the output GCM file. (.mat)
 %
 %   DCM_name:      String. name of specifyed DCM (.mat)
-%                  
-
+%   
+%   start_sub:     Int. index of the init subject.                  
+%
 %   nsub:          Int. Number of Subjects icluded in the analysis.
 %   -----------------------------------------------------------------------
-%   Last update: 26th Oct 2021;
+%   Last update: 29th Oct 2021;
 %   -----------------------------------------------------------------------
 
 
@@ -73,9 +74,7 @@ end
 if tf
     % Character array -> cell array. List of the name put in cell array
     % because this object is more handle.
-    % GCM = cellstr(dcms);
-    
-                
+    % GCM = cellstr(dcms);               
     
     % Filenames -> DCM structures. Load DCM file name into cell array
     %GCM = spm_dcm_load(string(GCM_names(:,1:13)));

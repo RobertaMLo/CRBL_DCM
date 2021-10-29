@@ -15,7 +15,7 @@ n_subj = 6;
 estimate = 0;
 
 disp("I'm doing DCM: ")
-dcm_ID = '5MROI_drivingSMA'
+dcm_ID = '5MROI_drivingC_1ord_toCRBL_fromV1'
 
 DCM_spec_estim_crbl2(parent_path, dcm_ID, init_subj, n_subj, estimate) 
 

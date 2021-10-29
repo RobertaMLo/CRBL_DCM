@@ -9,13 +9,15 @@ clc
 % Load GCM structure:
 current_dir = pwd;
 parent_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj/';
-GCM_struct = load(fullfile(parent_dir,'GCM_full.mat'));
+GCM_struct = load(fullfile(parent_dir,'GCM_full_5MREG_driving.mat'));
 GCM = GCM_struct.GCM; % load function save data into a struct.
 
 
-GCM_bmr = spm_dcm_bmr(GCM, {'A'});
+GCM_bmr = spm_dcm_bmr(GCM(:,1), {'A'});
 
-GCM_posthoc = spm_dcm_post_hoc(GCM);
+write_all = false
+
+GCM_posthoc = spm_dcm_post_hoc(GCM(:,2),'',{'A'}, write_all);
 
 
 

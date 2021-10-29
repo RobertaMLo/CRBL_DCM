@@ -11,10 +11,10 @@ parent_path = "/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj" %bcc;
 init_subj = 1;
 n_subj = 6;
 
-GCM_name = 'GCM_full_drivingCRBL_b.mat'
+GCM_name = 'GCM_full_dCRBL_1GF.mat'
 
-DCM_name = "_5MROI_drivin*";
+DCM_name = '_5MROI_drivingC_1ord*'
 
 GCM = GCM_builder(parent_path, GCM_name, DCM_name, init_subj, n_subj);
-
+spm_dcm_post_hoc(GCM(:,1),'',{'A'},write_all)
 cd(start_dir)
