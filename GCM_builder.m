@@ -1,4 +1,4 @@
-function GCM = GCM_builder (path_to_save, DCM_name, start_sub, nsub)
+function GCM = GCM_builder (path_to_save, GCM_filename, DCM_name, start_sub, nsub)
 % =========================================================================
 % Protocol to build and save a GCM structure. GCM is a group DCM where each
 % row i corresponds to suj i and col j corresponds to DCM j. GCM dim =
@@ -10,8 +10,9 @@ function GCM = GCM_builder (path_to_save, DCM_name, start_sub, nsub)
 %   Input
 %   path_to_save:  String. Please select the parent folder where each
 %                  subjects folders are stored
+%   GCM_filename:  String. name of the output GCM file. (.mat)
 %
-%   DCM_name:      String. name of specifyed DCM
+%   DCM_name:      String. name of specifyed DCM (.mat)
 %                  
 
 %   nsub:          Int. Number of Subjects icluded in the analysis.
@@ -59,7 +60,7 @@ if ~exist(out_dir,'file')
 end
 
 % Check if it exists
-if exist(fullfile(out_dir,'GCM_full.mat'),'file')
+if exist(fullfile(out_dir,GCM_filename),'file')
     opts.Default = 'No';
     opts.Interpreter = 'none';
     f = questdlg('Overwrite existing GCM?','Overwrite?','Yes','No',opts);
@@ -88,7 +89,7 @@ if tf
     GCM = spm_dcm_fit ( GCM , use_parfor ) ;
     
     % Save estimated GCM
-    save(fullfile(path_to_save, 'GCM_full.mat'),'GCM');
+    save(fullfile(path_to_save, GCM_filename),'GCM');
 end
 end
 

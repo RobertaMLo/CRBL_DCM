@@ -28,10 +28,10 @@ TE = 0.035;  % Echo time (secs)
 
 % Experiment settings
 nregions    = 5;
-nconditions = 1;
+nconditions = 2;
 
 % Index of each condition in the DCM
-GE=1; GEForce=1;
+GE=1; GEForce=2;
 
 % Index of each region in the DCM
 crbl=1; m1=2; pmc=3; sma=4; v1=5;
@@ -56,11 +56,12 @@ a = ones(nregions,nregions);
 %B-matrix
 %B = df/dxdu -> change due to external input u
 % u = task, pictures, words
-b(:,:) = zeros(nregions); %Force modulation
-% b(m1,crbl,end) = 1;
-% b(pmc,crbl,end) = 1;
-% b(sma,crbl,end) = 1;
-% b(crbl,crbl,end) = 1;
+b = zeros(nregions,nregions,nconditions); %Force modulation
+
+%b(from, to)
+b(v1,crbl,end) = 1; %from v1 to crbl = top down
+b(crbl,v1,end) = 1; %from crbl to v1 = bottom up
+
 
 % C-matrix
 c = zeros(nregions,nconditions);
@@ -89,13 +90,8 @@ for subject = init:nsub
         SPM     = SPM.SPM;
         
         % Load ROIs. It provides the EXPERIMENTAL TIME SERIES
-        %(_Fadj for F-contrast adjusted images)
+        % MUST BE CONSISTENT WITH THE INDEX ORDER
          f = {
-%             fullfile(glm_dir,'VOI_CRBL_PM_Fadj_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
-%             fullfile(glm_dir,'VOI_M1_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_PMC_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
-%             fullfile(glm_dir,'VOI_SMA_Fadj_1.mat');
             
             fullfile(glm_dir,'VOI_CRBL_R_A_MNI_1.mat'); %PROVIDING THE EXPERIMENTAL TIME SERIES
             fullfile(glm_dir,'VOI_M1_L_MNI_1.mat');
@@ -115,9 +111,8 @@ for subject = init:nsub
         
         % Select whether to include each condition from the design matrix
         % (GE, GEF1, GEF2, GEF3, GEF4)
- 
         
-        include = [1 0 0 0 0]; %GFE3
+        include = [1 0 0 1 0]; %GFE3
         
         % Specify. Corresponds to the series of questions in the GUI.
         % TIP: IF YOU MUST ANSWER QUESTIONS IN GUI, CREATE A STRUCTURE IN

@@ -4,6 +4,7 @@
 % Both at single and at population level
 
 clear
+clc
 
 % Load GCM structure:
 current_dir = pwd;
@@ -12,7 +13,9 @@ GCM_struct = load(fullfile(parent_dir,'GCM_full.mat'));
 GCM = GCM_struct.GCM; % load function save data into a struct.
 
 
-GCM = spm_dcm_bmr(GCM);
+GCM_bmr = spm_dcm_bmr(GCM, {'A'});
+
+GCM_posthoc = spm_dcm_post_hoc(GCM);
 
 
 

@@ -11,8 +11,10 @@ parent_path = "/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj" %bcc;
 init_subj = 1;
 n_subj = 6;
 
-DCM_name = 'DCM_26_Oct_2021_FULL_FIXED_CONN.mat';
+GCM_name = 'GCM_full_drivingCRBL_b.mat'
 
-GCM = GCM_builder (parent_path, DCM_name, init_subj, n_subj);
+DCM_name = "_5MROI_drivin*";
+
+GCM = GCM_builder(parent_path, GCM_name, DCM_name, init_subj, n_subj);
 
 cd(start_dir)
