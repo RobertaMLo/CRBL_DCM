@@ -18,7 +18,7 @@ function model_selection(mod_a, mod_b)
 F = NaN(5,2);
 nsubjects = 6;
 nmodels = 2;
-start_dir = pwd
+start_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj'
 
 for subject = 1:nsubjects
     if (subject == 4)
