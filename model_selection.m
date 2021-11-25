@@ -25,11 +25,11 @@ for subject = 1:nsubjects
         disp('*********** no data! ***********')
     else
         name = sprintf('S%d',subject)
-        glm_dir = fullfile(name,'AE','stats')
+        glm_dir = fullfile(start_dir, name,'AE','stats')
         
         for models = 1:nmodels
             name = {mod_a, mod_b};
-            t_path = fullfile(pwd, glm_dir, name{models});
+            t_path = fullfile(glm_dir, name{models});
             temp = load(t_path);
             
             F(subject,models) = temp.DCM.F; %load F. stat for each subj

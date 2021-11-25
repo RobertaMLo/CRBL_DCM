@@ -16,7 +16,7 @@ function GF = model_selection_ffx(parent_dir, GCM_filename)
 %   Last update:
 %   -----------------------------------------------------------------------
 
-    current_dir = pwd;
+   current_dir = pwd;
     
    load(fullfile(parent_dir,GCM_filename));
     

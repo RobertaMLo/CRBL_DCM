@@ -2,12 +2,14 @@
 % STRUCTURE IS FIXED IN .m FUNCTION
 
 clear
+clc
 
 start_dir = pwd
+
 parent_path = "/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj"
 
 init_subj = 1;
-n_subj = 6;
+n_subj = 1;
 
 % Use GCM builder to estimate DCM for all subjects!
 % Fastere cause parallel run is included!
@@ -15,7 +17,7 @@ n_subj = 6;
 estimate = 0;
 
 disp("I'm doing DCM: ")
-dcm_ID = '5MROI_drivingC_1ord_toCRBL_fromV1'
+dcm_ID = 'ccccc'
 
 DCM_spec_estim_crbl2(parent_path, dcm_ID, init_subj, n_subj, estimate) 
 

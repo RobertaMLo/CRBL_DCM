@@ -20,7 +20,7 @@ function model_crbl_modulation(my_folder_path,init,nsub, mod_ind, estimate)
 %
 %   estimate:   Logical. true to specify DCM, false to estimate DCM    
 %   -----------------------------------------------------------------------
-%   Last update: 07 Sept 2021;
+
 %   -----------------------------------------------------------------------
 
 %% MODEL SPECIFICATION
@@ -29,8 +29,8 @@ disp('Hello!!! I am a super cute DCM protocol to investigate CRBL modulation eff
 disp('====================================================================')
 
 % 1) Acquisition parameters ===============================================
-TR = 1.25;   % Repetition time (secs)
-TE = 0.04;  % Echo time (secs) --> Chech of they are ok!
+TR = 2.5;   % Repetition time (secs)
+TE = 0.035;  % Echo time (secs) --> Chech of they are ok!
 
 % 2) Indexing for code flexibility ========================================
 % VOI: CRBL_R, M1_L, PMC_L, SMA_L, V1_BIL

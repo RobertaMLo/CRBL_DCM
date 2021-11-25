@@ -24,7 +24,7 @@ function VOI_definition_MNI(parent_dir, start_subj, nsubj, VOI_name, ...
 %   VOI_name:       String. Name of VOI
 %   F_contr_adj:    Int. Index of contrast used for adjustment of
 %                   timeseries
-%   contr_thr:      Int. Index of contrast for finding peak
+%   contr_thr:      Float. pval thr for finding peak
 %   thr_val:        Float. pvalue to include voxel. Default = 0.001
 %   center_vec :    Vector of int. Center of VOI
 %
