@@ -4,8 +4,8 @@ function F_contrast_def(parent_dir, start_subj, nsubj, contr_name, contr_mat, de
 % 
 % NB: For each subject data must be organized in one folder per subject.
 %     Each subject folder must contain these paths:
-%           AE/stats/SPM.mat --> statistical analysis
-%           AE/splits/smooth_rwSlice_timing_0xyz' --> splitted fmri volumes
+%           Functional/stats/SPM.mat --> statistical analysis
+%           Functional/splits/ --> splitted fmri volumes
 %     
 %      Subject folders must be saved in a parent folder containing ONLY
 %      subject folders
@@ -19,8 +19,8 @@ function F_contrast_def(parent_dir, start_subj, nsubj, contr_name, contr_mat, de
 %                     folders are stored
 %   start_subj =      Int. Id of starting subject for the analysis
 %   nsubj:            Int. Number of subjects to analyse
-%   contr_name:       String. Name of VOI
-%   contr_mat:        Int. 0-1 matrix for F contrast definition
+%   contr_name:       String. Name of contrast
+%   contr_mat:        Int. matrix for F contrast definition
 %   del_contr:        Int. 0 to keep existing contrast, 1 to delete
 %   -----------------------------------------------------------------------
 %   Last update:
@@ -30,13 +30,13 @@ for subject=start_subj:nsubj
         
         name = sprintf('S%d',subject);
     
-        if isfolder( fullfile(parent_dir,name) )
+        if isfolder( fullfile(parent_dir,name,'Functional','stats') )
         
-            cd(fullfile(parent_dir,name,'AE','stats'))
+            cd(fullfile(parent_dir,name,'Functional','stats'))
             
             disp('=======================================================')
             disp('Hello!!!! ------ here I am')
-            fullfile(parent_dir,name,'AE','stats')
+            fullfile(parent_dir,name,'Functional','stats')
             
             % Insert the subject's SPM .mat filename here
             spm_mat_file = 'SPM.mat';

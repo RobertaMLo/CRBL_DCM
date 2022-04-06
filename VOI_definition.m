@@ -1,4 +1,4 @@
-function VOI_definition(parent_dir, start_subj, nsubj, VOI_name, contr_index, center_vec, thr_val)
+function VOI_definition(parent_dir, start_subj, nsubj, subject_space, VOI_name, contr4adj, contr_index, center_vec, dimension. thr_val)
 % =========================================================================
 % Protocol to define Volume Of Interest (VOI)
 % 
@@ -19,9 +19,12 @@ function VOI_definition(parent_dir, start_subj, nsubj, VOI_name, contr_index, ce
 %                   folders are stored
 %   start_subj =    Int. Id of starting subject for the analysis
 %   nsubj:          Int. Number of subjects to analyse
+%   contr4adj:      Int. Index of F contrast in SPM.mat
 %   VOI_name:       String. Name of VOI
+%   subject_space:  String. Choose 'Native' or 'MNI'
 %   thr_val:        Float. pvalue to include voxel. Default = 0.001
-%   center_vec :    Vector of int. Center od VOI
+%   center_vec :    Int. Center od VOI
+%   dimension:      Int. Radius of the sphere or dim of the box
 %
 %   -----------------------------------------------------------------------
 %   Last update:
@@ -45,7 +48,7 @@ function VOI_definition(parent_dir, start_subj, nsubj, VOI_name, contr_index, ce
             % Start batch
             clear matlabbatch;
             matlabbatch{1}.spm.util.voi.spmmat  = cellstr(spm_mat_file);
-            matlabbatch{1}.spm.util.voi.adjust  = 2;                    
+            matlabbatch{1}.spm.util.voi.adjust  = contr4adj;                    
             matlabbatch{1}.spm.util.voi.session = 1;                    % Session index
             matlabbatch{1}.spm.util.voi.name    = VOI_name;             % VOI name
             
@@ -61,17 +64,22 @@ function VOI_definition(parent_dir, start_subj, nsubj, VOI_name, contr_index, ce
             
             % Define large fixed outer sphere
             matlabbatch{1}.spm.util.voi.roi{2}.sphere.centre     = center_vec; % Set coordinates here
-            matlabbatch{1}.spm.util.voi.roi{2}.sphere.radius     = 10;           % Radius (mm)
+            matlabbatch{1}.spm.util.voi.roi{2}.sphere.radius     = dimension;           % Radius (mm)
             matlabbatch{1}.spm.util.voi.roi{2}.sphere.move.fixed = 1;
             
-            % Define smaller inner sphere which jumps to the peak of the outer sphere
-            matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre           = [0 0 0]; % Leave this at zero
-            matlabbatch{1}.spm.util.voi.roi{3}.sphere.radius           = 6;       % Set radius here (mm)
-            matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.spm  = 1;       % Index of SPM within the batch
-            matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.mask = 'i2';    % Index of the outer sphere within the batch: {2} sopra
-            
-            % Include voxels in the thresholded SPM (i1) and the mobile inner sphere (i3)
-            matlabbatch{1}.spm.util.voi.expression = 'i1 & i3';
+            if strcmp(subject_space,'MNI')
+                % Include voxels in the thresholded SPM (i1) and the sphere(i2)
+                matlabbatch{1}.spm.util.voi.expression = 'i1 & i2';
+                
+            elseif strcmp(subject_space,'Native')
+                % Define smaller inner sphere which jumps to the peak of the outer sphere
+                matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre           = [0 0 0]; % Leave this at zero
+                matlabbatch{1}.spm.util.voi.roi{3}.sphere.radius           = 6;       % Set radius here (mm)
+                matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.spm  = 1;       % Index of SPM within the batch
+                matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.mask = 'i2';    % Index of the outer sphere within the batch: {2} sopra
+                % Include voxels in the thresholded SPM (i1) and the mobile inner sphere (i3)
+                matlabbatch{1}.spm.util.voi.expression = 'i1 & i3';
+            end
             
             % Run the batch
             spm_jobman('run',matlabbatch);

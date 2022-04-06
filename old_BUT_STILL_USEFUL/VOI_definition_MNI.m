@@ -76,6 +76,10 @@ function VOI_definition_MNI(parent_dir, start_subj, nsubj, VOI_name, ...
             matlabbatch{1}.spm.util.voi.roi{2}.sphere.move.supra.mask = '';
             matlabbatch{1}.spm.util.voi.expression = 'i1 & i2';
             
+            
+            if strcmp(subj_space,'Native')
+                
+            
             % Run the batch
             spm_jobman('run',matlabbatch);
             cd(parent_dir);
