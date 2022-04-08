@@ -1,0 +1,58 @@
+function VOI_group_mask(protDir, VOI_name, contr4adj, contr4act, thrs, mask_abs_path, geometry, center, dimension)
+%-----------------------------------------------------------------------
+% Job saved on 19-Jan-2022 11:00:50 by cfg_util (rev $Rev: 7345 $)
+% spm SPM - SPM12 (7487)
+% cfg_basicio BasicIO - Unknown
+%-----------------------------------------------------------------------
+
+%---matlabbatch{1}.spm.util.voi.spmmat = {fullfile(protDir,'Group_analysis/SPM.mat')};
+matlabbatch{1}.spm.util.voi.adjust = contr4adj;
+matlabbatch{1}.spm.util.voi.session = 1;
+
+% Name of the VOI. Call it name_of_the_region__numberBA__side
+matlabbatch{1}.spm.util.voi.name = VOI_name;
+
+% -------------------------------------------------------------------------
+% 1) Define threshold on SPM for finding peak
+% -------------------------------------------------------------------------
+matlabbatch{1}.spm.util.voi.roi{1}.spm.spmmat = {''};
+matlabbatch{1}.spm.util.voi.roi{1}.spm.contrast = contr4act;
+matlabbatch{1}.spm.util.voi.roi{1}.spm.conjunction = 1;
+matlabbatch{1}.spm.util.voi.roi{1}.spm.threshdesc = 'none';
+matlabbatch{1}.spm.util.voi.roi{1}.spm.thresh = thrs; %Increase if VOI is too small
+matlabbatch{1}.spm.util.voi.roi{1}.spm.extent = 0;
+matlabbatch{1}.spm.util.voi.roi{1}.spm.mask = struct('contrast', {}, 'thresh', {}, 'mtype', {});
+
+% -------------------------------------------------------------------------
+% Select the mask image from Brodman Atlas
+% -------------------------------------------------------------------------
+matlabbatch{1}.spm.util.voi.roi{2}.mask.image = {horzcat(mask_abs_path,',1')};
+matlabbatch{1}.spm.util.voi.roi{2}.mask.threshold = 0.5;
+
+% -------------------------------------------------------------------------
+% Define a geometrical ROI
+% -------------------------------------------------------------------------
+if strcmp(geometry,'sphere')
+    matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = center;
+    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = [41 40 29];
+    matlabbatch{1}.spm.util.voi.roi{3}.sphere.radius = dimension; %Set it according to the anatomy of region
+    matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.spm = 1;
+    matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.mask = 'i2';
+    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.supra.spm = 1 ;
+    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.supra.mask = 'i2';
+    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.local.spm = 1;
+    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.local.mask = 'i2';
+elseif strcmp(geometry,'box')
+    matlabbatch{1}.spm.util.voi.roi{3}.box.centre = center;
+    matlabbatch{1}.spm.util.voi.roi{3}.box.dim = dimension;
+    matlabbatch{1}.spm.util.voi.roi{3}.box.move.global.spm = 1;
+    matlabbatch{1}.spm.util.voi.roi{3}.box.move.global.mask = 'i2';
+else
+    disp('INVALID VALUE FOR GEOMETRY')
+end
+
+matlabbatch{1}.spm.util.voi.expression = 'i1 & i2 & i3';
+
+spm_jobman('run',matlabbatch);
+
+end
