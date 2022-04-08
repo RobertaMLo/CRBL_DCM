@@ -1,4 +1,4 @@
-function VOI_definition(parent_dir, start_subj, nsubj, subject_space, VOI_name, contr4adj, contr_index, center_vec, dimension. thr_val)
+function VOI_definition(parent_dir, start_subj, nsubj, subject_space, VOI_name, contr4adj, contr_index, center_vec, geometry, dimension, thr_val)
 % =========================================================================
 % Protocol to define Volume Of Interest (VOI)
 % 
@@ -36,11 +36,11 @@ function VOI_definition(parent_dir, start_subj, nsubj, subject_space, VOI_name, 
     
         if isfolder( fullfile(parent_dir,name) )
         
-            cd(fullfile(parent_dir,name,'AE','stats'))
+            cd(fullfile(parent_dir,name,'Functional','stats'))
             
             disp('=======================================================')
             disp('HELLO ROBI!!!! How are u doing? Here I am to work for you! Be happy :D ')
-            fullfile(parent_dir,name,'AE','stats')
+            fullfile(parent_dir,name,'Functional','stats')
             
             % Insert the subject's SPM .mat filename here
             spm_mat_file = 'SPM.mat';
@@ -62,10 +62,12 @@ function VOI_definition(parent_dir, start_subj, nsubj, subject_space, VOI_name, 
             matlabbatch{1}.spm.util.voi.roi{1}.spm.mask ...
                 = struct('contrast', {}, 'thresh', {}, 'mtype', {});
             
-            % Define large fixed outer sphere
+            % Define sphere
             matlabbatch{1}.spm.util.voi.roi{2}.sphere.centre     = center_vec; % Set coordinates here
             matlabbatch{1}.spm.util.voi.roi{2}.sphere.radius     = dimension;           % Radius (mm)
-            matlabbatch{1}.spm.util.voi.roi{2}.sphere.move.fixed = 1;
+            matlabbatch{1}.spm.util.voi.roi{2}.sphere.move.global.spm = 1;
+            matlabbatch{1}.spm.util.voi.roi{2}.sphere.move.global.mask = 'i2'
+                
             
             if strcmp(subject_space,'MNI')
                 % Include voxels in the thresholded SPM (i1) and the sphere(i2)
