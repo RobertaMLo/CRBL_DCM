@@ -1,0 +1,9 @@
+
+protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5';
+init_subj = 1;
+nsubj = 1;
+DCM_filname = ['full_conn_SMA', 'full_conn_CRBL']
+A_filename = ['A_full.txt'];
+B_filename = ''
+C_filename = ['C_V1.txt', 'C_CRBL.txt'];
+

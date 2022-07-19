@@ -1,4 +1,4 @@
-function GCM = GCM_builder (path_to_save, GCM_filename, DCM_name, start_sub, nsub)
+function GCM = GCM_builder (protDir, path_to_save, GCM_filename, DCM_name, start_sub, nsub)
 % =========================================================================
 % Protocol to build and save a GCM structure. GCM is a group DCM where each
 % row i corresponds to suj i and col j corresponds to DCM j. GCM dim =
@@ -35,7 +35,7 @@ c=1; %counter. c=c+1 if the subject exists
 for i = start_sub:nsub
     
     name = sprintf('S%d',i)
-    sub_folder = fullfile(path_to_save,name);
+    sub_folder = fullfile(fullfile(protDir,name,'Functional/stats/DCM_models'));
     
     if isfolder(sub_folder)
         

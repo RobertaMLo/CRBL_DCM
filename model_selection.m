@@ -1,132 +1,145 @@
-function model_selection(mod_a, mod_b)
+function GF = model_selection(protDir, GCM_filename)
 % =========================================================================
-% Protocol to run a DCM model selection
-% FFX = Fixed Effects
-% RRX = Random Effects
+% BMS FFX of GCM full mat
 % =========================================================================
 %   @author: robertalorenzi
-%   creation date: Dec 16th, 2020
+%   creation date: Oct 27th, 2021
 %   -----------------------------------------------------------------------
 %   Input:
-%   mod_a: String. Model one
-%   mod_b: String. Model two
+%   parent_dir : String. path of the parent folder where GLM file is stored
+%   GCM_filename: String. .mat file of GCM
+%
+%   !!!! NEXT UPDATES: make the code flexible for BF and GBF for more
+%   than 2 models!!!!!!
+
 %   -----------------------------------------------------------------------
-%   Last update: Dec 16th, 2020
+%   Last update:
 %   -----------------------------------------------------------------------
 
-
-F = NaN(5,2);
-nsubjects = 6;
-nmodels = 2;
-start_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj'
-
-for subject = 1:nsubjects
-    if (subject == 4)
-        disp('*********** no data! ***********')
-    else
-        name = sprintf('S%d',subject)
-        glm_dir = fullfile(start_dir, name,'AE','stats')
-        
-        for models = 1:nmodels
-            name = {mod_a, mod_b};
-            t_path = fullfile(glm_dir, name{models});
-            temp = load(t_path);
+   current_dir = pwd;
+    
+   load(fullfile(protDir,'GCM_models',GCM_filename));
+    
+    F = NaN(size(GCM,1), size(GCM,2));
+    
+    for nmodels = 1:size(GCM,2)
+        for subj = 1:size(GCM,1)
             
-            F(subject,models) = temp.DCM.F; %load F. stat for each subj
+            F(subj,nmodels) = GCM{subj,nmodels}.F ; %get the log model evidence
+        
         end
     end
+    
+    %Compute subject specific Bayes Factor --------------------------------
+    %BFi,j = p(y|mi) - p(y|mj) -----------------------------------------------
+    delta_F = F(:,1)-F(:,2)
+    
+    
+    figure;
+    col= [0.7 0.7 0.7];
+    barh(delta_F, 'm','facecolor', col, 'edgecolor', 'none');
+    ylim([0 size(F,1)+1])
+    title('log model evidence difference', 'FontSize', 16)
+    ylabel('subject', 'FontSize', 12)
+    xlabel('\Delta F', 'FontSize', 12)
+    text(-200, 0, 'Model 2', 'FontSize', 14)
+    text(0, 200, 'Model 1', 'FontSize', 14)
+    box off
+    
+%     delta_F = F(:,1)-F(:,3)
+%     
+%     
+%     figure;
+%     col= [0.7 0.7 0.7];
+%     barh(delta_F, 'm','facecolor', col, 'edgecolor', 'none');
+%     ylim([0 size(F,1)+1])
+%     title('log model evidence difference', 'FontSize', 16)
+%     ylabel('subject', 'FontSize', 12)
+%     xlabel('\Delta F', 'FontSize', 12)
+%     text(-200, 0, 'Model 2', 'FontSize', 14)
+%     text(0, 200, 'Model 1', 'FontSize', 14)
+%     box off
+%     
+%     delta_F = F(:,2)-F(:,3)
+%     
+%     
+%     figure;
+%     col= [0.7 0.7 0.7];
+%     barh(delta_F, 'm','facecolor', col, 'edgecolor', 'none');
+%     ylim([0 size(F,1)+1])
+%     title('log model evidence difference', 'FontSize', 16)
+%     ylabel('subject', 'FontSize', 12)
+%     xlabel('\Delta F', 'FontSize', 12)
+%     text(-200, 0, 'Model 2', 'FontSize', 14)
+%     text(0, 200, 'Model 1', 'FontSize', 14)
+%     box off
+    %% FIXED EFFECT ANALYSIS ----------------------------------------------
+    %compute the Group Bayes Factor----------------------------------------
+    %GBF_ij = Prod_ksub (BF_ij)^(k)----------------------------------------
+    sumF = sum(F,1)
+    GBF = exp(sumF-sumF(1))
+
+    % pp
+    sumF = sumF - max(sumF);
+    pp = exp(sumF)./sum(exp(sumF));
+
+    figure;
+    col = [0.6 0.6 0.6];
+    colormap(col);
+    bar(pp, 'm');
+    xlim([0 7])
+    set(gca, 'xtick', [1 2 3 4, 5, 6])
+    title('FFX BMS', 'FontSize', 16)
+    xlabel('model', 'FontSize', 12)
+    ylabel('posterior probability', 'FontSize', 12)
+    axis square
+    box off
+    
+    %% RANDOM EFFECTS ANALYSIS---------------------------------------------
+   
+    [alpha, exp_r, xp, pxp, bor] = spm_BMS(F, 1e6, 1, 0, 1, ones(1,size(F,2)));
+
+    figure;
+    col = [0.6 0.6 0.6];
+    colormap(col);
+    bar(xp, 'm');
+    xlim([0 7])
+    set(gca, 'xtick', [1 2 3 4 5 6])
+    title('Exceedance probabilities', 'FontSize', 16)
+    xlabel('model', 'FontSize', 12)
+    ylabel('Probability', 'FontSize', 12)   
+    axis square
+    box off
+
+    % probability that each model is the most likely model across all subjects 
+    % taking into account the null possibility that differences in model 
+    % evidence are due to chance
+    figure;
+    col = [0.6 0.6 0.6];
+    colormap(col);
+    bar(xp,'m');
+    xlim([0 7])
+    set(gca, 'xtick', [1 2 3 4 5 6])
+    title('Protected exceedance probabilities', 'FontSize', 16)
+    xlabel('model', 'FontSize', 12)
+    ylabel('Probability', 'FontSize', 12)
+    axis square
+    box off
+
+%     figure;
+%     col = [0.6 0.6 0.6];
+%     colormap(col);
+%     bar(bor, 'm');
+%     xlim([0 7])
+%     set(gca, 'xtick', [1 2 3 4 5 6])
+%     title('BOR - p(best model) > 0.5', 'FontSize', 16)
+%     xlabel('model', 'FontSize', 12)
+%     ylabel('Probability', 'FontSize', 12)
+%     axis square
+%     box off
+%     
+    cd(current_dir)
+    
+    
 end
 
-F(4,:)=[];
-
-%% FIXED EFFECTS FFX
-% Compute subject specific Bayes Factor
-BF = exp(F(:,1)-F(:,2))
-
-F(:,1)-F(:,2)
-
-% figure;
-% col= [0.7 0.7 0.7];
-% barh(BF, 'facecolor', col, 'edgecolor', 'none');
-% ylim([0 size(F,1)+1])
-% title('Bayesian Factor', 'FontSize', 16)
-% ylabel('subject', 'FontSize', 12)
-% xlabel('\Delta F', 'FontSize', 12)
-% text(-200, 0, 'Model 2', 'FontSize', 14)
-% text(0, 200, 'Model 1', 'FontSize', 14)
-% box off
-
-figure;
-col= [0.7 0.7 0.7];
-barh(F(:,1)-F(:,2), 'facecolor', col, 'edgecolor', 'none');
-ylim([0 size(F,1)+1])
-title('log model evidence difference', 'FontSize', 16)
-ylabel('subject', 'FontSize', 12)
-xlabel('\Delta F', 'FontSize', 12)
-text(-200, 0, 'Model 2', 'FontSize', 14)
-text(0, 200, 'Model 1', 'FontSize', 14)
-box off
-
-% Compute Group Bayes Factor GBF and posterior prob pp
-% GBF
-sumF = sum(F,1)
-GBF = exp(sumF-sumF(1))
-
-% pp
-sumF = sumF - max(sumF);
-pp = exp(sumF)./sum(exp(sumF));
-
-figure;
-col = [0.6 0.6 0.6];
-colormap(col);
-bar(pp);
-xlim([0 3])
-set(gca, 'xtick', [1 2])
-title('Model posterior probabilities', 'FontSize', 16)
-xlabel('model', 'FontSize', 12)
-ylabel('probability', 'FontSize', 12)
-axis square
-box off
-
-%% RANDOM EFFECTS RRX
-
-[alpha, exp_r, xp, pxp, bor] = spm_BMS(F, 1e6, 1, 0, 1, ones(1,size(F,2)));
-
-figure;
-col = [0.6 0.6 0.6];
-colormap(col);
-bar(xp);
-xlim([0 3])
-set(gca, 'xtick', [1 2])
-title('Exceedance probabilities', 'FontSize', 16)
-xlabel('model', 'FontSize', 12)
-ylabel('Probability', 'FontSize', 12)
-axis square
-box off
-
-% probability that each model is the most likely model across all subjects 
-% taking into account the null possibility that differences in model 
-% evidence are due to chance
-figure;
-col = [0.6 0.6 0.6];
-colormap(col);
-bar(xp);
-xlim([0 3])
-set(gca, 'xtick', [1 2])
-title('Protected exceedance probabilities', 'FontSize', 16)
-xlabel('model', 'FontSize', 12)
-ylabel('Probability', 'FontSize', 12)
-axis square
-box off
-
-figure;
-col = [0.6 0.6 0.6];
-colormap(col);
-bar(pp);
-xlim([0 3])
-set(gca, 'xtick', [1 2])
-title('BOR - p(best model) > 0.5', 'FontSize', 16)
-xlabel('model', 'FontSize', 12)
-ylabel('Probability', 'FontSize', 12)
-axis square
-box off

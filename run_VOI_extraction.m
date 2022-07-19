@@ -16,19 +16,22 @@ subj_vec2=[5:20];
 subj_vec3=[22:23];
 subj_vec = [subj_vec1 subj_vec2 subj_vec3];
 
-tot_voi = 6;
 contr4adj = 2;
 contr4act = 1;
 center = [0 0 0];
 
-VOI_name_vec = {'V1_BA15115_RL', 'SPL_138_L', 'CC_BA117_L', 'M1_BA131_L', 'SMAPMC_BA122_L', 'CRBL_R'};
+%VOI_name_vec = {'V1_BA15115_RL', 'SPL_138_L', 'CC_BA117_L', 'M1_BA131_L', 'SMAPMC_BA122_L', 'CRBL_R'};
 
-thrs_vec = [0.01, 0.001, 0.01, 0.001, 0.001, 0.001];
-dim_sphere = [10, 10, 15, 10, 15];
+
+
+subj_vec = [6];
+VOI_name_vec = {'SMAPMC_BA122_L'};
+tot_voi = length(VOI_name_vec);
+thrs_vec = [0.005];
+geometry = 'sphere';
+dim_sphere = [10];
 
          
-
-
 for i = 1:length(subj_vec)
     disp('**********************************  Working on: *****************************')
     subject = subj_vec(i);
@@ -54,12 +57,10 @@ for i = 1:length(subj_vec)
        disp('=============================================================')
        disp('geometry and dimension: ')
        
-       if i_voi == 1
-           geometry = 'box'
+       if strcmp(geometry,'box')
            dimension = [90 90 90]
            
-       else
-           geometry = 'sphere'
+       elseif strcmp(geometry,'sphere')
            dimension = dim_sphere(i_sph)
             i_sph = i_sph+1;
        end
