@@ -42,9 +42,12 @@ nconditions = 5;
 
 % Index of each condition in the DCM
 % set 1 if yhou want to include the effect, 0 otherwise
-include = zeros(1,nconditions);
+AE_bool=1; AEf1_bool=0; AEf2_bool=0; AEf3_bool=0; AEf4_bool=0;
+include = [AE_bool, AEf1_bool, AEf2_bool, AEf3_bool, AEf4_bool];
 
-AE=1; AEf1=1; AEf2=1; AEf3 =1; AEf4 = 0;
+% Select whether to include each condition from the design matrix
+% (AE, AE^force1, AE^force2, AE^force3, AE^force4)
+AE=1; AEf1=2; AEf2=3; AEf3 =4; AEf4 = 5;
 
 % 3) DCM matrices specification ===========================================
 % Added comments:
@@ -69,7 +72,7 @@ a = importdata(fullfile(protDir,'DCM_A_matrix_files',A_filename));
 % u = Force Modulation
 
 if strcmp(B_filename,'')
-    b = zeros(nregions,nregions,nconditions);
+    b = zeros(nregions,nregions,1);
 else
     b = importdata(fullfile(protDir,'DCM_B_matrix_files',B_filename));
 end
@@ -78,7 +81,7 @@ end
 % 3.3) C-matrix ===========================================================
 % fixed prior: it's known that
 if strcmp(C_filename,'')
-    c = zeros(nregions,nconditions);
+    c = zeros(nregions,1);
     c(end,AE) = 1;
 else
     c = importdata(fullfile(protDir,'DCM_C_matrix_files',C_filename));
@@ -124,11 +127,6 @@ for subject = init_subj:nsubj
         
         % Select whether to include each condition from the design matrix
         % (AE, AE^force1, AE^force2, AE^force3, AE^force4)
-        include(1) = AE;
-        include(2) = AEf1;
-        include(3) = AEf2;
-        include(4) = AEf3;
-        include(5) = AEf4;
 
         % Specify ========================================================= 
         % This Corresponds to the series of questions in the GUI.
@@ -146,7 +144,7 @@ for subject = init_subj:nsubj
         s = struct();
         s.name       = dcm_fullname;                                        % FULL name of .mat file
         s.u          = include;                                             % Conditions used to make Hp on matrix A
-        s.delays     = repmat(TR,1,nregions);                               % Slice timing for each region
+        s.delays     = repmat(0,1,nregions);                               % Slice timing for each region
         s.TE         = TE;
         s.nonlinear  = false;
         s.two_state  = false;

@@ -18,7 +18,7 @@ function trial_visuomotor_DCM(protDir, init_subj, nsubj, DCM_filename, estimate)
 %   DCM_filename: String. DCM_YYYYDDMM_DCM_filename.mat. DCM_YYY...
 %                 authomatic.
 %
-%   estimate:   Logical. true to specify DCM, false to estimate DCM    
+%   estimate:   Logical. true to estimate  
 %   -----------------------------------------------------------------------
 
 %   -----------------------------------------------------------------------
@@ -27,7 +27,7 @@ function trial_visuomotor_DCM(protDir, init_subj, nsubj, DCM_filename, estimate)
 disp('====================================================================')
 disp('Hello!!! I am a super cute DCM protocol to investigate CRBL modulation effect')
 disp('====================================================================')
-
+pback =pwd;
 % 1) Acquisition parameters ===============================================
 TR = 2.5;   % Repetition time (secs)
 TE = 0.035;  % Echo time (secs) --> Chech if they are ok!
@@ -43,7 +43,7 @@ nconditions = 3;
 % Index of each condition in the DCM
 % set 1 if yhou want to include the effect, 0 otherwise
 include = zeros(1,nconditions);
-AE_bool=1; AEf1_bool= 1 ; AEf2_bool= 1; AEf3_bool=0; AEf4_bool = 0;
+AE_bool=1; AEf1_bool= 1; AEf2_bool= 1; AEf3_bool=0; AEf4_bool = 0;
 
 % Select whether to include each condition from the design matrix
 % (AE, AE^force1, AE^force2, AE^force3, AE^force4)
@@ -55,8 +55,7 @@ include(5) = AEf4_bool;
 
 %define the position!!! of conditions in vector include
 AE=1; %fixed always at 1 because it is the driving input and the first col of SPM.mat 
-
-%AEf1 = 2; AEf2 = 3; AEf3=4; AEf4 = 5; %numbers are the SPM.mat columns but
+AEf1 = 2; AEf2 = 3; AEf3 = 4; AEf4 = 5; %numbers are the SPM.mat columns but
 %ignore them for the moment :)
 
 % Define the order of the VOI
@@ -80,16 +79,25 @@ v1 = 6;
 % A=df/dx with u = 0 -> Fixed nodes coupling.
 % 0 = switched off connection --> FIXED TO PRIOR!
 
-a = ones(nregions);
-%a(crbl, v1) = 0
-%a(v1, crbl) = 0
-%a(spl, cc) = 0
-%a(spl, m1) = 0
-
-a(smapmc, spl) = 0
-a(cc, v1) = 0
-a(m1, spl) = 0
-a(v1, crbl) = 0
+a = ones(nregions); %% SET 0 THE CONN BASED on REDUCED MODEL 4
+a(cc,m1) = 0
+a(smapmc,smapmc) = 0
+a(spl,smapmc) = 0
+a(smapmc,spl) = 0
+a(spl,spl)= 0
+a(cc,spl) = 0
+a(crbl,spl) = 0
+a(v1,spl) = 0
+a(m1,cc) = 0
+a(spl,cc) = 0
+a(cc,cc) = 0
+a(crbl,cc) = 0
+a(v1,cc) = 0
+a(spl,crbl) = 0
+a(cc,crbl) = 0
+a(smapmc, v1) = 0
+a(spl,v1) = 0
+a(cc,v1) = 0
 
 
 % uncomment to import matrix A from a file .txt
@@ -101,33 +109,28 @@ a(v1, crbl) = 0
 
 %B-matrix
 %B = df/dxdu -> change due to external input u.
-% u = Force Modulation
+% u = Force ModulationDCM_filename
 
 %n conditions is the number of conditions included (not which conditions!)
 %n conditions MUST BE the same of "1" you put in AEXXX_bool
 %see the vector "include" for the order.
 
 b = zeros(nregions,nregions,nconditions);
+% ATTENTION!!!! b(TO, FROM, TYPE_OF_MOD)
 
-%b(crbl,v1,AEf3)=1;
-%b(m1,smapmc,AEf1)=1;
-%b(m1,crbl,AEf1)=1;
-
-%b(m1,spl,3)=1;
-%b(m1, crbl, 2) = 1;
-%b(m1, smapmc, 2) = 1;
-
-b(m1, crbl, 1) = 1;
-b(smapmc, crbl, 2) = 1;
-b(v1, m1, 1) = 1;
-
+%forward
+b(smapmc,crbl,AEf2) =1;
+b(m1,crbl,AEf1) =1;
+b(m1,smapmc,AEf1) =1;
+%backward
+b(crbl,m1,AEf1) =1;
+b(smapmc,m1,AEf2) =1;
 
 % 3.3) C-matrix ===========================================================
 % fixed prior: it's known that
 c = zeros(nregions, nconditions);
 
-c(v1,AE)=1;
-    
+c(v1,AE)=1;    
     
 % D-matrix (disabled but must be specified)
 d = zeros(nregions,nregions,0);
@@ -184,12 +187,12 @@ for subject = init_subj:nsubj
         s = struct();
         s.name       = dcm_fullname;                                        % FULL name of .mat file
         s.u          = include;                                             % Conditions used to make Hp on matrix A
-        s.delays     = repmat(TR,1,nregions);                               % Slice timing for each region
+        s.delays     = [0, 0, 0, 0, 0, 0];                                  % Slice timing for each region
         s.TE         = TE;
         s.nonlinear  = false;
         s.two_state  = false;
         s.stochastic = false;
-        s.centre     = false;                                                % mean center the input!
+        s.centre     = true;                                               % mean center the input!
         s.induced    = 0;
         s.a          = a;
         s.b          = b;
@@ -214,4 +217,5 @@ for subject = init_subj:nsubj
     end
 end
 
-cd('~') %back to the root directory
+cd(pback)
+%cd('~') %back to the root directory

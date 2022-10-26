@@ -34,7 +34,7 @@
 % %                     segmentation (5TT.nii.gz) and fibre orientation 
 % %                     distribution (WM_FODs.nii.gz) per voxel
 % %      3 - fMRI 1st Level Analysis:
-% %      4 - fMRI 2nd Level Analysis: Whole-brain tractogram reconstruction & cerebro-cerebellar
+% %      4 - fMRI 2nd Level Analysis ---- TO BE COMPLETED FROM HERE
 % %          tracts selection
 % %      5 - VOI Definition and Extraction
 % %      6 - DCM Models Definition
@@ -128,13 +128,13 @@ switch step
                 cost_fun_fMRI2T1 = 'normmi';
                 sub_2_check = [2,7,9,12,13,14,22];
                 if ismember(subject, sub_2_check)
-                    cost_fun_fMRI2T1 = 'corratio';
+                    cost_fun_fMRI2T1 = 'corratio'; 
                 end
                 
                 % input: TR, acquisition, n_vol, n_slices, T1_filename,
                 % CSFmask, sub_id
                 disp('!!!!!! Lets the functional party start babeeeeee !!!!!!! ')
-                fMRI_preproc_corr2(TR, acquisition, nvol, num_slices,...
+                fMRI_preproc_corr_DCMAE(TR, acquisition, nvol, num_slices,...
                      fullfile(pwd,'T13D_nu_brain.nii.gz'), fmri_filename, fullfile(pwd,CSF_mask_fast), cost_fun_fMRI2T1);
                 
                 

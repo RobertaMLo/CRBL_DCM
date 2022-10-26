@@ -37,7 +37,7 @@ function GF = model_selection(protDir, GCM_filename)
     
     figure;
     col= [0.7 0.7 0.7];
-    barh(delta_F, 'm','facecolor', col, 'edgecolor', 'none');
+    barh(delta_F, 'b','facecolor', col, 'edgecolor', 'none');
     ylim([0 size(F,1)+1])
     title('log model evidence difference', 'FontSize', 16)
     ylabel('subject', 'FontSize', 12)
@@ -86,9 +86,9 @@ function GF = model_selection(protDir, GCM_filename)
     figure;
     col = [0.6 0.6 0.6];
     colormap(col);
-    bar(pp, 'm');
-    xlim([0 7])
-    set(gca, 'xtick', [1 2 3 4, 5, 6])
+    bar(pp, 'b');
+    xlim([0 10])
+    set(gca, 'xtick', [1 2 3 4, 5, 6, 7, 8])
     title('FFX BMS', 'FontSize', 16)
     xlabel('model', 'FontSize', 12)
     ylabel('posterior probability', 'FontSize', 12)
