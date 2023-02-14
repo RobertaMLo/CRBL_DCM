@@ -82,7 +82,7 @@ IMPROVMENT to be done: when more than 2 models, make the delpta F comparison aut
 ====================================================
 model_reduction.m
 Matlab exec.
-Implement bayesian model reduction and post-hoc analysis algorithm (just recall spm functions)
+Implement bayesian model reduction for each model type saved in an already estimate GCM file
 ====================================================
 remove_DCMs.m
 Matlab function.
