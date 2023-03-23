@@ -1,4 +1,4 @@
-function [] = AE_conditions_filemaker(file_mat,struct_name)
+function [] = AO_conditions_filemaker(file_mat,struct_name)
 % =========================================================================
 %   Save a .mat file of the experimental condition for AE UCL protocol.
 %   The output file is used as input in "Multiple Conditions" to compute
@@ -18,7 +18,7 @@ function [] = AE_conditions_filemaker(file_mat,struct_name)
 %cond_fname = 'conditions.mat';                                             % condition file name. Must be a .mat
 
 %load(file_mat)
-% EHIIIII CIAOOOOO DEVO ESSERE MODIFICATO
+
 
 % Number of conditions is the number of the experimental tasks
 % Additional condition from params modulation are automatically added.
