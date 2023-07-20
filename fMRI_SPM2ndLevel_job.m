@@ -13,10 +13,10 @@
 %--------------------------------------------------------------------------
 clc; clear; close all
 
-start_subj = 1;
-nsubj = 23;
+start_subj = 2;
+nsubj = 14;
 
-protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5';
+protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND';
 outputDir = fullfile(protDir,'Group_analysis');
 
 cont = 1;
@@ -60,6 +60,6 @@ matlabbatch{3}.spm.stats.con.spmmat = {fullfile(outputDir,'SPM.mat')};
 matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'AE_vs_rest_group';
 matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
 matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-matlabbatch{3}.spm.stats.con.delete = 0; %don't delete pre-existent contrast
+matlabbatch{3}.spm.stats.con.delete = 1; %don't delete pre-existent contrast
 
 spm_jobman('run',matlabbatch);

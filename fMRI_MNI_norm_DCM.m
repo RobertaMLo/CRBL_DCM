@@ -11,7 +11,7 @@ function []= fMRI_MNI_norm_DCM(protDir, matlab_folder, native_fMRI)
 % cfg_basicio BasicIO - Unknown
 % -------------------------------------------------------------------------
 
-cd('Functional')
+
 input_split = fullfile(pwd, native_fMRI)
 
 disp('I am splitting volumes')
@@ -68,4 +68,3 @@ spm_jobman('run', matlabbatch);
 mkdir('Preproc_fMRI/wsplits_mni2mm');
 !mv Preproc_fMRI/splits/w*.nii Preproc_fMRI/wsplits_mni2mm
 !gzip -f Preproc_fMRI/splits/f*.nii
- cd(protDir)

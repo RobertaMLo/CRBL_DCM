@@ -1,4 +1,4 @@
-function [] = AE_conditions_filemaker(file_mat,struct_name)
+function [] = AO_conditions_filemaker(file_mat,assigned_struct)
 % =========================================================================
 %   Save a .mat file of the experimental condition for AE UCL protocol.
 %   The output file is used as input in "Multiple Conditions" to compute
@@ -6,7 +6,8 @@ function [] = AE_conditions_filemaker(file_mat,struct_name)
 % =========================================================================
 %   Input:
 %   file_mat    = String. Name of the file containing raw informations
-%   struct_name = String. Name of the conditions file. Must be a .mat
+%   assigned_struct = Assign the structure.PUT THE NAME OF THE STRUC WITHOUT
+%   APEX ''
 %
 % -------------------------------------------------------------------------
 % author:       robertalorenzi
@@ -15,9 +16,9 @@ function [] = AE_conditions_filemaker(file_mat,struct_name)
 % version:      rev.00 - Mar 9th 2022
 % revised by:   
 % -------------------------------------------------------------------------
-%cond_fname = 'conditions.mat';                                             % condition file name. Must be a .mat
+%cond_fname = 'conditions.mat';                                            % condition file name. Must be a .mat
 
-%load(file_mat)
+load(file_mat)
 
 
 % Number of conditions is the number of the experimental tasks
@@ -27,15 +28,18 @@ names = cell(1,1);
 onsets = cell(1,1);
 durations = cell(1,1);
 
-names{1} = 'AE';                                                           % Name of the Experimental condition
-onsets{1} = struct_name.Time;                                              % Onset time: Starting time of task execution.
-durations{1} = zeros(length(struct_name.Time),1);                          % Duariotion of the condition. 0 because Event-Related design
 
-pmod = struct('name',{''},'param',{},'poly',{});                           % Fixed structure. See spm GUI
+
+names{1} = 'AO';                                                           % Name of the Experimental condition
+onsets{1} = cue.SqueezeANDHOLD.Time;                                       % Onset time: Starting time of task execution.
+durations{1} = zeros(length(cue.SqueezeANDHOLD.Time),1);                   % Duariotion of the condition. 0 because Event-Related design
+
+
+pmod = assigned_struct('name',{''}, 'param' ,{},'poly',{});                  % Fixed structure. See spm GUI
 %pmod.(condition_number).name{param_number} Here 1 condition (AE) and 1
 %params (squeeze = force level)
 pmod(1).name{1} = 'force';                                                 % Mod param name
-pmod(1).param{1} = struct_name.squeeze;                                    % Mod param values
+pmod(1).param{1} = cue.SqueezeANDHOLD.squeeze;                             % Mod param values
 pmod(1).poly{1} = 4;                                                       % Poly expansion
 
 save('Functional/stats/cond4SPM', 'names', 'onsets', 'durations', 'pmod')

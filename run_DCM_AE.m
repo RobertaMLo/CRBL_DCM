@@ -19,14 +19,16 @@ clear
 work_dir = pwd; %matlab folder
 
 disp('Here is my protocol director')
-protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5';
+protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND/';
 
 % subject to analyse
-subj_vec1=[1:3];
-subj_vec2=[5:20];
-subj_vec3=[22:23];
-subj_vec = [subj_vec1 subj_vec2 subj_vec3];
+%subj_vec1=[1:3];
+%subj_vec2=[5:20];
+%subj_vec3=[22:23];
+subj_vec = [7:14];
+%subj_vec = [14];
 
+%subj_vec=[2, 7,....]
 for i = 1:length(subj_vec)
     disp('*************************  Working on: *************************')
     subject = subj_vec(i)
@@ -35,22 +37,19 @@ for i = 1:length(subj_vec)
 %     cd(fullfile(protDir,sub_id))
 %     unix(horzcat('cp Functional/stats/con_0001.nii ../Group_analysis/conn_0001_',sub_id,'.nii'))  
 %     
-
+% 
 %     disp('=================== Structural Preprocessing ===================')
-%     struct_prot_dir = fullfile(sub_parent_dir,sub_id,'Anatomical')
+%     DCM_AE(protDir,sub_id,0)
+%     cd(protDir)
 %     
-%     DCM_AE(struct_prot_dir,subject,0)
-%     cd(work_dir)
-    
 %     disp('=================== Functional Preprocessing ===================')
-%     funct_prot_dir = fullfile(sub_parent_dir,sub_id,'Functional')
-%     DCM_AE(funct_prot_dir,subject,1)
-%     cd(work_dir)
+%     DCM_AE(protDir,sub_id,1)
+%     cd(protDir)
 %     
 %     disp('=================== fMRI First level analysis ===================')
-%     DCM_AE(fullfile(sub_parent_dir,sub_id),subject,2)
-%     cd(work_dir)
-% 
+%     DCM_AE(protDir,sub_id,2)
+%     cd(protDir)
+ 
      disp('=================== fMRI Second level analysis ===================')
      DCM_AE(fullfile(protDir,sub_id),subject,3)
     

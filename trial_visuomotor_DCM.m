@@ -99,6 +99,27 @@ a(smapmc, v1) = 0
 a(spl,v1) = 0
 a(cc,v1) = 0
 
+% a(smapmc,smapmc)= 0
+% a(spl,smapmc) = 0
+% a(v1,smapmc) = 0
+% a(smapmc,spl) = 0
+% a(spl,spl) = 0
+% a(cc,spl) = 0
+% a(crbl,spl) = 0
+% a(v1,spl) = 0
+% a(smapmc,cc) = 0
+% a(spl,cc) = 0
+% a(cc,cc) = 0
+% a(crbl, cc) = 0
+% a(v1,cc) = 0
+% a(spl,crbl) = 0
+% a(cc,crbl) = 0
+% a(v1,crbl) = 0
+% a(m1,v1) = 0
+% a(smapmc,v1)= 0
+% a(spl,v1) = 0
+% a(cc,v1) = 0
+% a(crbl,v1) = 0
 
 % uncomment to import matrix A from a file .txt
 %a = importdata(fullfile(protDir,'DCM_A_matrix_files',A_filename));
@@ -115,16 +136,23 @@ a(cc,v1) = 0
 %n conditions MUST BE the same of "1" you put in AEXXX_bool
 %see the vector "include" for the order.
 
-b = zeros(nregions,nregions,nconditions);
+%b = zeros(nregions,nregions,nconditions);
 % ATTENTION!!!! b(TO, FROM, TYPE_OF_MOD)
+b = zeros(nregions);
 
 %forward
-b(smapmc,crbl,AEf2) =1;
-b(m1,crbl,AEf1) =1;
-b(m1,smapmc,AEf1) =1;
+% b(crbl,v1,AEf3) =1;
+% b(v1,v1,AEf1) =1;
+% b(smapmc,v1,AEf3) =1;
+
+
+% b(crbl,crbl,AEf1) =1;
+% 
+% b(smapmc,cc,AEf2) =1;
+
 %backward
-b(crbl,m1,AEf1) =1;
-b(smapmc,m1,AEf2) =1;
+%b(crbl,m1,AEf1) =1;
+%b(smapmc,m1,AEf2) =1;
 
 % 3.3) C-matrix ===========================================================
 % fixed prior: it's known that
@@ -154,7 +182,7 @@ for subject = init_subj:nsubj
         f = {
             fullfile(glm_dir,'VOI_M1_BA131_L_1.mat');
             fullfile(glm_dir,'VOI_SMAPMC_BA122_L_1.mat');
-            fullfile(glm_dir,'VOI_SPL_138_L_1.mat');
+            fullfile(glm_dir,'VOI_SPL_BA138_L_1.mat');
             fullfile(glm_dir,'VOI_CC_BA117_L_1.mat');
             fullfile(glm_dir,'VOI_CRBL_R_1.mat')
             fullfile(glm_dir,'VOI_V1_BA15115_RL_1.mat')
@@ -192,7 +220,7 @@ for subject = init_subj:nsubj
         s.nonlinear  = false;
         s.two_state  = false;
         s.stochastic = false;
-        s.centre     = true;                                               % mean center the input!
+        s.centre     = false; %true;                                               % mean center the input!
         s.induced    = 0;
         s.a          = a;
         s.b          = b;

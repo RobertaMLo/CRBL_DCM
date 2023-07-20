@@ -34,7 +34,7 @@
 % %                     segmentation (5TT.nii.gz) and fibre orientation 
 % %                     distribution (WM_FODs.nii.gz) per voxel
 % %      3 - fMRI 1st Level Analysis:
-% %      4 - fMRI 2nd Level Analysis ---- TO BE COMPLETED FROM HERE
+% %      4 - fMRI 2nd Level Analysis ---- TO BE COMPLETED FROM HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 % %          tracts selection
 % %      5 - VOI Definition and Extraction
 % %      6 - DCM Models Definition
@@ -49,13 +49,14 @@
 % % Date: 9th Feb 2022
 % %________________________________________________________________________
 
-function []=DCM_AE(protDir, subject, step)
+function []=DCM_AE(protDir, sub_id, step)
 
 switch step
     case 0
         %% T1 preprocessing
         % ================================================================%
-        cd(protDir)                                                                %parent directory where subject sub dirs where stored
+        struct_prot_dir = fullfile(protDir,sub_id,'Anatomical')
+        cd(struct_prot_dir)                                                                %parent directory where subject sub dirs where stored
         directory
         szdirlist=size(dirlist,2);                                         
         for pat=1:szdirlist                                                        % loop on directory tree look for anatomical folder called "Anatomic"
@@ -76,6 +77,7 @@ switch step
                 
                 mkdir('T1_preproc')
                 
+                %%%%%% CHECK IF THIS COMMAND WORKS ON YOUR PC
                 unix(horzcat('mri_nu_correct.mni --i ',...
                     t1_filename,' --o T1_preproc/T13D_nu.nii.gz --n 10 --proto-iters 500'))
 
@@ -94,7 +96,8 @@ switch step
     case 1
         %% fMRI preprocessing
         % =================================================================
-        cd(protDir)
+        funct_prot_dir = fullfile(protDir,sub_id,'Functional');
+        cd(funct_prot_dir)
         directory
         szdirlist=size(dirlist,2);
         for pat=1:szdirlist
@@ -109,43 +112,49 @@ switch step
                 fmri_filename = name{1}
        
                 
-                copyfile ../Anatomical/T1_preproc/T13D_nu_brain.nii.gz
-                copyfile ../Anatomical/T1_preproc/T13D_nu_brain_seg_0.nii.gz
-%                 
-%                 % WM,GM and CSF segmentations and CSF mask
-%                 disp('...... Computing fast segmentations (actually not very fast :D)' )
-%                 !fast -g T13D_nu_brain.nii.gz
+                %copyfile ../Anatomical/T1_preproc/T13D_nu_brain.nii.gz
                 
+                
+                % WM,GM and CSF segmentations and CSF mask
+                %disp('...... Computing fast segmentations (actually not very fast :D)' )
+                % -g option to have also binary _seg file (default=_pve)
+                %!fast -g T13D_nu_brain.nii.gz
+                
+                %copyfile ../Functional/T1_preproc/T13D_nu_brain_seg_0.nii.gz
+
                 % _seg_0 is CSF mask output of fast
                 CSF_mask_fast = 'T13D_nu_brain_seg_0.nii.gz';
-                
+            
                 num_slices = 46;                                           % number of slice (z -dim3)
                 TR = 2.5;                                                  % Repetition Time [s]
                 nvol = 200;                                                % number of volumes acquired in time (dim 4)  
                 acquisition = 3;                                           % acquisition type 3 = descending
  
                 
-                cost_fun_fMRI2T1 = 'normmi';
-                sub_2_check = [2,7,9,12,13,14,22];
-                if ismember(subject, sub_2_check)
-                    cost_fun_fMRI2T1 = 'corratio'; 
-                end
+%                 cost_fun_fMRI2T1 = 'normmi';
+                cost_fun_fMRI2T1 = 'corratio';
+                % for AE data:
+%                 sub_2_check = [2,7,9,12,13,14,22];
+%                 if ismember(subject, sub_2_check)
+%                     cost_fun_fMRI2T1 = 'corratio'; 
+%                 end
                 
                 % input: TR, acquisition, n_vol, n_slices, T1_filename,
                 % CSFmask, sub_id
                 disp('!!!!!! Lets the functional party start babeeeeee !!!!!!! ')
+               
                 fMRI_preproc_corr_DCMAE(TR, acquisition, nvol, num_slices,...
                      fullfile(pwd,'T13D_nu_brain.nii.gz'), fmri_filename, fullfile(pwd,CSF_mask_fast), cost_fun_fMRI2T1);
                 
                 
                 
                 % move the segmentations into Anatomic folder
-                
-%                 movefile 'T13D_nu_brain_seg_*' '../Anatomical/T1_preproc/'
-%                 % delete un necessary files
-%                 delete *mixeltype*
-%                 delete *_pve*
-%                 delete *_seg.nii.gz
+                %movefile 'T13D_nu_brain_seg_*' '../Anatomical/T1_preproc/'
+                % delete un necessary files
+                delete *mixeltype*
+                delete *_pve*
+                delete *_seg.nii.gz
+
 
 %%%% ADD GROUP SPM.mat CASE 4: include NORM!!!!!!
 %                 % fMRI Normalization to MNI space.
@@ -163,22 +172,27 @@ switch step
         end
         
     case 2
-        %% fMRI 1st level analysis
-        cd(protDir)
-        
+%         %% fMRI 1st level analysis
+%         sub_dir = fullfile(protDir,sub_id);
+%         cd(sub_dir)
+%         
 %         % Normalise the data
 %         disp('I am Normalizing fMRI 2 MNI 2mm space')
 %         matlab_folder = '/home/bcc/matlab';
 %         native_fMRI = 'fMRI_Filtered.nii';
+%         cd('Functional')
 %         fMRI_MNI_norm_DCM(protDir, matlab_folder, native_fMRI)
 %         
 %         % Smooth the data
 %         disp('I am doing smoothing')
-%         input_vols = 'Functional/Preproc_fMRI/wsplits_mni2mm'; fwhm_width = [6 6 6];
+%         input_vols = 'Preproc_fMRI/wsplits_mni2mm'; fwhm_width = [6 6 6];
 %         fMRI_smooth_DCM_job(protDir, input_vols, fwhm_width)
         
+% %         %%%%%%% TILL HERE
 %         % Create a conditions file to compute the SPM.mat
 %         disp('Creating a conditions file for SPM computation ')
+%         %cd ../
+%         
 %         
 %         file_mat = dir('*.mat');                                           % raw condition file MUST be the only .mat file saved 
 %                                                                            % inside the subject folder
@@ -188,43 +202,50 @@ switch step
 % 
 %         load(file_mat);
 %         
-%         %MAYBE THIS PART DELETE FROM THE PIPELINE. SPECIFIC FOR ADNAN AND
-%         %LETI DATA. FROM NOW I USE THE NEW FILES 4 CONDITIONS
-%         %Leti data: from 1 to 14
-%         %Adnan data: from 15 to end
-%         % 13: typo Error
-%         % 15 & 16 different names
-%         if subject <= 12 || subject == 14 || subject >= 18 || subject == 21                                              
-%             AE_conditions_filemaker(file_mat, cue.SqueezeANDHOLD)
-%         elseif subject == 13
-%             AE_conditions_filemaker(file_mat, cue.SqueezeANHOLD)
-%         elseif subject == 15
-%             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S1_P5R)
-%         elseif subject == 16
-%             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S2_P5R)
-%         else                                                               
-%            AE_conditions_filemaker(file_mat, SqueezeANDHOLD)
-%         end
-%         
-% %         stats_folder = 'Functional/stats'
-% %         if ~isfolder(stats_folder):                                      
-% %             mkdir(fullfile(prot_dir,'Functional'), stats_folder)
+% %         %MAYBE THIS PART DELETE FROM THE PIPELINE. SPECIFIC FOR ADNAN AND
+% %         %LETI DATA. FROM NOW I USE THE NEW FILES 4 CONDITIONS
+% %         %Leti data: from 1 to 14
+% %         %Adnan data: from 15 to end
+% %         % 13: typo Error
+% %         % 15 & 16 different names
+% %         if subject <= 12 || subject == 14 || subject >= 18 || subject == 21                                              
+% %             AE_conditions_filemaker(file_mat, cue.SqueezeANDHOLD)
+% %         elseif subject == 13
+% %             AE_conditions_filemaker(file_mat, cue.SqueezeANHOLD)
+% %         elseif subject == 15
+% %             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S1_P5R)
+% %         elseif subject == 16
+% %             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S2_P5R)
+% %         else                                                               
+% %            AE_conditions_filemaker(file_mat, SqueezeANDHOLD)
 % %         end
- 
+%         
+%         stats_folder = 'Functional/stats'
+%         if ~isfolder(stats_folder);                                      
+%             mkdir(fullfile(protDir,'Functional'), stats_folder)
+%         end
+%  
+% %%%%%%% HERE AO_function.....
+% 
+%           AO_conditions_filemaker(file_mat,assigned_struct)
+%         
+%         disp('Computing SPM.mat ................')
+%         input_vols = 'Functional/Preproc_fMRI/swsplits_mni2mm';
+%         cd('Functional')
+%         input_vols = 'Preproc_fMRI/swsplits_mni2mm';
+%         
+%         %input_vols = 'Preproc_fMRI/splits'; %uncomment to use the NOT
+%         %filtered data
+%         
+%         %output_dir = 'stats_native';
+%         output_dir = 'stats';
+%         
+%         units = 'secs'; TR = 2.5; slice_num = 46; ref_slice = 23;           % Design and preproc parameters
+%         
+%         fMRI_SPM_AE_job(input_vols, output_dir, units, TR, slice_num, ref_slice)
         
-        disp('Computing SPM.mat ................')
-        %input_vols = 'Functional/Preproc_fMRI/swsplits_mni2mm';
-        cd('Functional')
-        
-        input_vols = 'Preproc_fMRI/splits';
-        output_dir = 'stats_native';
-        
-        units = 'secs'; TR = 2.5; slice_num = 46; ref_slice = 23;           % Design and preproc parameters
-        
-        fMRI_SPM_AE_job(input_vols, output_dir, units, TR, slice_num, ref_slice)
-        
-        disp('Estimating GLM model .................')
-        fMRI_SPM_AE_GLMestim_job(output_dir)
+%         disp('Estimating GLM model .................')
+%         fMRI_SPM_AE_GLMestim_job(output_dir)
         
         
     case 3

@@ -1,0 +1,35 @@
+% % =======================================================================
+% % Merging different GCMs 
+% % =======================================================================
+pathGCM = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND/GCM_models' %path where the GCMs are stored
+GCM1 = 'GCM_AO_HAND_FIXED_M1.mat'  %define the GCMs that will be merged
+GCM2 = 'GCM_AO_HAND_FIXED_M2.mat'
+GCM3 = 'GCM_AO_HAND_FIXED_M3.mat'
+GCM4 = 'GCM_AO_HAND_FIXED_M4.mat'
+GCM5 = 'GCM_AO_HAND_FIXED_M5.mat' 
+% GCM6 = 'FAMILY_H2_FM1_M6.mat'
+% GCM7 = 'FAMILY_H2_FM1_M7.mat'
+% GCM8 = 'FAMILY_H2_FM1_M8.mat'
+
+GCM1 = load(fullfile(pathGCM,'GCM_AO_HAND_FIXED_M1.mat'))  %load the GCMs
+GCM2 = load(fullfile(pathGCM,'GCM_AO_HAND_FIXED_M2.mat'))
+GCM3 = load(fullfile(pathGCM,'GCM_AO_HAND_FIXED_M3.mat'))
+GCM4 = load(fullfile(pathGCM,'GCM_AO_HAND_FIXED_M4.mat'))
+GCM5 = load(fullfile(pathGCM,'GCM_AO_HAND_FIXED_M5.mat')) 
+% GCM6 = load(fullfile(pathGCM,'FAMILY_H2_FM1_M6.mat'))
+% GCM7 = load(fullfile(pathGCM,'FAMILY_H2_FM1_M7.mat'))
+% GCM8 = load(fullfile(pathGCM,'FAMILY_H2_FM1_M8.mat'))
+
+% GCM = [GCM1.GCM , GCM2.GCM , GCM3.GCM , GCM4.GCM , GCM5.GCM , GCM6.GCM , GCM7.GCM , GCM8.GCM]  %in order to go and get inside each GCM 
+
+GCM = [GCM1.GCM , GCM2.GCM , GCM3.GCM , GCM4.GCM]
+
+
+% after merging GCMs, save and navigate the merged GCM to the GCM_models
+% folder from the workspace
+
+% % =======================================================================
+
+
+
+

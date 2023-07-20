@@ -23,11 +23,11 @@ function [] = fMRI_SPM_AE_job(input_vols, output_dir, units, TR, slice_num, ref_
 % revised by: 
 % -------------------------------------------------------------------------
 
-cd(input_vols)
+%cd(input_vols)
 
 !gunzip *.nii.gz
 
-fnames = dir('fMRI*');                                                      
+fnames = dir('swfMRI*');                                                      
 vols = {fnames.name};
 
 scans = cell(length(vols), 1);

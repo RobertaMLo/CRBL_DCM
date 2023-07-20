@@ -1,8 +1,17 @@
 function VOI_extraction(protDir, stats_dir, VOI_name, contr4adj, contr4act, thrs, mask_abs_path, geometry, center, dimension)
 %-----------------------------------------------------------------------
+% VOI EXTRACTION PROTOCOL
+% protDir = your subject folder (AO_HAND / AE_P5 )
+% stats_dir = stats folder of the subjects
+% VOI_name = vector that includes the name of the VOIs (Ex: 'V1_BA15115_RL' )
+% mask_dir = directory to save the masks. Folder that contains group
+% spm.mat (../AO_HAND/Group_analysis)
+% mask_abs_path = file contains masks
+%
 % Job saved on 19-Jan-2022 11:00:50 by cfg_util (rev $Rev: 7345 $)
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
+% Edited by Gokce, 27 march 2023
 %-----------------------------------------------------------------------
 
 %---matlabbatch{1}.spm.util.voi.spmmat = {fullfile(protDir,'Group_analysis/SPM.mat')};
@@ -35,7 +44,7 @@ matlabbatch{1}.spm.util.voi.roi{2}.mask.threshold = 0.5;
 % -------------------------------------------------------------------------
 if strcmp(geometry,'sphere')
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = center;
-    % matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = [41 40 29];
+    %matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = [-5 -4 50];
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.radius = dimension; %Set it according to the anatomy of region
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.spm = 1;
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.mask = 'i2';

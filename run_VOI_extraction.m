@@ -2,35 +2,36 @@ clc
 clear
 
 %directory where the .m file is stored
-work_dir = pwd; %matlab folder
-
+%work_dir = pwd; %matlab folder
+work_dir = '/home/bcc/matlab/Roberta/CRBL_DCM'
 disp('Here is my protocol director')
 %DIR....
-protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5';
+protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND';
 
-mask_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5/Group_analysis';
+mask_dir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND/Group_analysis';
 
 % subject to analyse
-subj_vec1=[1:3];
-subj_vec2=[5:20];
-subj_vec3=[22:23];
-subj_vec = [subj_vec1 subj_vec2 subj_vec3];
+%subj_vec1=[1:3];
+%subj_vec2=[5:20];
+%subj_vec3=[22:23];
+subj_vec = [14];
 
 contr4adj = 2;
 contr4act = 1;
-center = [0 0 0];
+center = [-5 -4 40];
 
-%VOI_name_vec = {'V1_BA15115_RL', 'SPL_138_L', 'CC_BA117_L', 'M1_BA131_L', 'SMAPMC_BA122_L', 'CRBL_R'};
+%VOI_name_vec = {'V1_BA15115_RL', 'SPL_BA138_L', 'CC_BA117_L', 'M1_BA131_L', 'SMAPMC_BA122_L', 'CRBL_R'};
 
 
 
-subj_vec = [6];
+subj_vec = [14];
 VOI_name_vec = {'SMAPMC_BA122_L'};
 tot_voi = length(VOI_name_vec);
-thrs_vec = [0.005];
+thrs_vec = [0.5];
 geometry = 'sphere';
+%geometry = 'box';
 dim_sphere = [10];
-
+%dim_sphere = [90 90 90];
          
 for i = 1:length(subj_vec)
     disp('**********************************  Working on: *****************************')

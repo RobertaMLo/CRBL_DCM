@@ -16,7 +16,7 @@ function T_con_def(stats_dir, con_name, con_vect, delete_bool)
 % date: March 25th 2022
 %-----------------------------------------------------------------------
 matlabbatch{1}.spm.stats.con.spmmat = {fullfile(pwd,stats_dir,'SPM.mat')};
-matlabbatch{1}.spm.stats.con.consess{1}.tcon.name = con_name;               %action_vs_rest';
+matlabbatch{1}.spm.stats.con.consess{1}.tcon.name = con_name; %action_vs_rest';
 matlabbatch{1}.spm.stats.con.consess{1}.tcon.weights = con_vect;
 matlabbatch{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
 matlabbatch{1}.spm.stats.con.delete = delete_bool;
