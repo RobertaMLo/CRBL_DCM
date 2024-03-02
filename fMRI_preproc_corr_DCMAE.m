@@ -31,140 +31,141 @@ function []=fMRI_preproc_corr_DCMAE(TR, acquisition, nvol, num_fette, T1path, fm
 % =======================================================================
 %     1 - MP-PCA
 % =======================================================================
-%     preproc_folder = 'Preproc_fMRI';                                           % name of new folder to save preproc output
-% 
-%     if ~isfolder(preproc_folder)                                               % CHECK IF PREPROC HAS BEEN ALREADY DONE
-%         mkdir(preproc_folder)                                                  % new folder to save the prerocessed results
-%         disp('MP-PCA')                                                         % disp on command window what I'm doing
-%     
-%         unix(horzcat('dwidenoise ',fmri_filename,' ',fullfile(preproc_folder,'fMRI_den.nii.gz'),...
-%         ' -noise ',fullfile(preproc_folder,'noise.nii.gz'),' -force -quiet'))
-%     
-% %     else
-% %      disp('Preprocessing already done!')
-%        exit;
-%     end
+    preproc_folder = 'Preproc_fMRI';                                           % name of new folder to save preproc output
+
+    if ~isfolder(preproc_folder)                                               % CHECK IF PREPROC HAS BEEN ALREADY DONE
+        mkdir(preproc_folder)                                                  % new folder to save the prerocessed results
+        disp('MP-PCA')                                                         % disp on command window what I'm doing
+    
+        unix(horzcat('dwidenoise ',fmri_filename,' ',fullfile(preproc_folder,'fMRI_den.nii.gz'),...
+        ' -noise ',fullfile(preproc_folder,'noise.nii.gz'),' -force -quiet'))
+    
+    else
+     disp('Preprocessing already done!')
+       %exit;
+    end
 % % =======================================================================
 % %     2. - Slice-timing 
 % % =======================================================================
     cd Preproc_fMRI/
-%     disp('Slice Timing on fMRI.')
-%     !fslsplit fMRI_den.nii.gz vol
-%     !gunzip -f vol*.nii.gz
+    disp('Slice Timing on fMRI.')
+    !fslsplit fMRI_den.nii.gz vol
+    !gunzip -f vol*.nii.gz
+
+    lista=dir('vol*.nii');
+    for n=1:nvol,filename{1,n}=lista(n).name;end
+    TA=TR-TR/num_fette;
+    tempo(1)=TA/(num_fette-1);
+    tempo(2)=TR-TA;
+
+    switch acquisition
+        case 1 % interleaved
+            disp('Acquisition type = interleaved')
+            
+            % slices order
+            ordine =[1:2:num_fette 2:2:num_fette];
+            
+            % reference slice = last slice (even #slice = last-1, odd
+            % #slice = last)
+            if rem(num_fette,2) == 0
+                ref_fetta=num_fette-1;
+            else
+                ref_fetta=num_fette;
+            end
+
+        case 2 % ascending
+            disp('Acquisition type = ascending')
+            
+            %slice order
+            ordine = 1:num_fette;
+            
+            %reference slice = middle slice
+            ref_fetta = round(num_fette/2);
+            
+        case 3 % descending
+            disp('Acquisition type = descending')
+            
+            %slice order
+            ordine = num_fette:-1:1;
+            
+            %reference slice = middle slice
+            ref_fetta = round(num_fette/2);      
+    end
+
+    spm_slice_timing(filename,ordine,ref_fetta,tempo); 
+    close all  
+    delete vol*
+
+    !fslmerge -t afMRI_den avol*                 
 % 
-%     lista=dir('vol*.nii');
-%     for n=1:nvol,filename{1,n}=lista(n).name;end
-%     TA=TR-TR/num_fette;
-%     tempo(1)=TA/(num_fette-1);
-%     tempo(2)=TR-TA;
-% 
-%     switch acquisition
-%         case 1 % interleaved
-%             disp('Acquisition type = interleaved')
-%             
-%             % slices order
-%             ordine =[1:2:num_fette 2:2:num_fette];
-%             
-%             % reference slice = last slice (even #slice = last-1, odd
-%             % #slice = last)
-%             if rem(num_fette,2) == 0
-%                 ref_fetta=num_fette-1;
-%             else
-%                 ref_fetta=num_fette;
-%             end
-% 
-%         case 2 % ascending
-%             disp('Acquisition type = ascending')
-%             
-%             %slice order
-%             ordine = 1:num_fette;
-%             
-%             %reference slice = middle slice
-%             ref_fetta = round(num_fette/2);
-%             
-%         case 3 % descending
-%             disp('Acquisition type = descending')
-%             
-%             %slice order
-%             ordine = num_fette:-1:1;
-%             
-%             %reference slice = middle slice
-%             ref_fetta = round(num_fette/2);      
-%     end
-% 
-%     spm_slice_timing(filename,ordine,ref_fetta,tempo); 
-%     close all  
-%     delete vol*
-% 
-%     !fslmerge -t afMRI_den avol*                 
-% % 
-% % % =======================================================================
-% % %     3. - Realignment
-% % % =======================================================================
-%     disp('Realignment of fMRI data')
-% 
-%     lista=dir('avol*.nii');
-%     fnms={};
-%     for i = 1:size(lista,1)
-%         fnms{i} = strcat(pwd,'/',lista(i).name,',1');
-%     end
-% 
-%     matlabbatch{1}.spm.spatial.realign.estwrite.data={fnms'};
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.quality = 1;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.sep = 4;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.fwhm = 5;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.rtm = 1;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.interp = 2;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];
-%     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = '';
-%     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.which = [2 1];
-%     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.interp = 4;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
-%     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.mask = 1;
-%     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.prefix = 'r';    
-% 
-%     spm('defaults', 'FMRI');
-%     spm_jobman('run',matlabbatch);
-% 
-%     !fslmerge -t rafMRI_den ravol* 
-%     
-%     mkdir splits
-%     movefile ravol* splits
-%     
-%     delete avol*
-%     !gzip -f meanavol0000.nii
-%     movefile meanavol0000.nii.gz ..
+% % =======================================================================
+% %     3. - Realignment
+% % =======================================================================
+    disp('Realignment of fMRI data')
+
+    lista=dir('avol*.nii');
+    fnms={};
+    for i = 1:size(lista,1)
+        fnms{i} = strcat(pwd,'/',lista(i).name,',1');
+    end
+
+    matlabbatch{1}.spm.spatial.realign.estwrite.data={fnms'};
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.quality = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.sep = 4;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.fwhm = 5;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.rtm = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.interp = 2;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = '';
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.which = [2 1];
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.interp = 4;
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.mask = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.prefix = 'r';    
+
+    spm('defaults', 'FMRI');
+    spm_jobman('run',matlabbatch);
+
+    !fslmerge -t rafMRI_den ravol* 
+    
+    mkdir splits
+    movefile ravol* splits
+    
+    delete avol*
+    !gzip -f meanavol0000.nii
+    movefile meanavol0000.nii.gz ..
 % 
 % =======================================================================
 %     4. - Coregistration + CSF thresholding/erose with Alvin mask
 % =======================================================================
-%    mkdir Coreg
+   mkdir Coreg
     disp('Coregistration of fMRI on T1')
-%     
-%     % BET-based procedure. Compute also the BET of the fMRI meanvol
+    
+    % BET-based procedure. Compute also the BET of the fMRI meanvol
      if strfind(T1path,'_brain')~=0
-%         
-%         % Extract the BET from the meanavol of fMRI.
-%         % OUTPUT: betted fMRI mean volume
+         disp('no bet!!! I compute it')
+        
+        % Extract the BET from the meanavol of fMRI.
+        % OUTPUT: betted fMRI mean volume
          !bet ../meanavol0000 meanavol0000_brain -f 0.22 -g 0
-%         
-%         % Coregistratuon fMRI on T1.
-%         % OUTPUT: Coreg/meanfMRI2T13D --> fmri co-registered onto T1
+        
+        % Coregistratuon fMRI on T1.
+        % OUTPUT: Coreg/meanfMRI2T13D --> fmri co-registered onto T1
 
        unix(horzcat('flirt -in meanavol0000_brain.nii.gz -ref ',...
             T1path,' -o Coreg/meanfMRI2T13D -omat Coreg/meanfMRI2T13D.mat -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -bins 256 -cost ',cost_fun_fMRI2T1,' -interp trilinear'));
         !convert_xfm -omat Coreg/T13D2meanfMRI.mat -inverse Coreg/meanfMRI2T13D.mat
         
         disp('T13D Normalization')
-        % Normalization on MNI space.
-        % OUTPUT: Coreg/T13D2MNI1mm
+%       Normalization on MNI space.
+%       OUTPUT: Coreg/T13D2MNI1mm
         unix(horzcat('flirt -in ',T1path,' -ref $FSLDIR/data/standard/MNI152_T1_1mm_brain -out Coreg/T13D2MNI1mm -omat Coreg/T13D2MNI1mm.mat -bins 256 -cost normmi -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -interp sinc -sincwidth 7 -sincwindow hanning'));
-        % Coregistration on 2mm MMI because Alvin is a 2 mm atlas.
+%       Coregistration on 2mm MMI because Alvin is a 2 mm atlas.
         unix(horzcat('fnirt --ref=$FSLDIR/data/standard/MNI152_T1_2mm_brain --in=',T1path,' --aff=Coreg/T13D2MNI1mm.mat --config=$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf --cout=Coreg/T13D_nu_warpcoef.nii.gz --iout=Coreg/T13D2MNI_fnirt'));
-        % Transformation field to go back to the Native space
+%       Transformation field to go back to the Native space
         unix(horzcat('invwarp -w Coreg/T13D_nu_warpcoef.nii.gz -o Coreg/MNI_warpcoef.nii.gz -r ',T1path));
     
-    % All-MRI procedure. Use the whole T1 and fMRI (Steps commented above)
+   % All-MRI procedure. Use the whole T1 and fMRI (Steps commented above)
     else
         unix(horzcat('flirt -in ../meanavol0000.nii.gz -ref ',T1path,' -o Coreg/meanfMRI2T13D -omat Coreg/meanfMRI2T13D.mat -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -bins 256 -cost normmi -interp trilinear'));
         !convert_xfm -omat Coreg/T13D2meanfMRI.mat -inverse Coreg/meanfMRI2T13D.mat
@@ -204,8 +205,10 @@ function []=fMRI_preproc_corr_DCMAE(TR, acquisition, nvol, num_fette, T1path, fm
     mkdir('ImgAR')
     copyfile rafMRI_den.nii.gz ImgAR
     Datadir=strcat(pwd,'/','ImgAR');
-    % y_CompCor from DPABI
-    disp('ATTENTION!!!! If Error in y_CompCor, please change CUTNUMBER =1 ')
+    %y_CompCor from DPABI
+    % check on y_CompCor_PC that CUTNUMBER = 1. If is not 1, change it !!!!!!!!
+    disp('-------------------------------------------ATTENTION!!!! If Error in y_CompCor, please change CUTNUMBER =1 ')
+    disp('IF CUTNUMBER = 1, CHECK THE COREGISTRATIONS, SOMETHING COULD BE WRONG (EMPTY IMAGES)')
     [PCs] = y_CompCor_PC(Datadir,CompCorMasks, 'CompCorPCs', Cfg.Covremove.CSF.CompCorPCNum);
     CovariablesDef.CovMat = [CovariablesDef.CovMat, PCs];
 

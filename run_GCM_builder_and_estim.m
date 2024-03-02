@@ -5,7 +5,7 @@ clear
 %protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AE_P5/';
 wDir= pwd;
 
-protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND';
+protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND_BAR';
 
 init_subj = 2;
 nsubj = 14;

@@ -21,7 +21,8 @@ workdir = pwd;                                                             % sav
 %    'Please type the absolute path of fMRI data directory:\n ', 's');
 %cd(fmri_folder)
 
-fmri_folder = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj/S5/AE/data/fMRI';
+%fmri_folder = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj/S5/AE/data/fMRI';
+fmri_folder = '~/Desktop/S14/Functional';
 cd(fmri_folder)
 
 % To get information as the number of slices, open img with fsleyes and
@@ -31,7 +32,7 @@ TR = 2.5;                                                                  % Rep
 nvol = 200;                                                                % number of volumens (dim4)
 
 %T1path = input('Please insert the absolute path of the T1 file including the name of T1')
-T1path = '/media/bcc/Volume/Analysis/Roberta/DCM/attention_subj/S5/AE/data/T1/20160420_135525MR001WIPSAGT13DGRE1mmisoSENSEA9410442s401a1004.nii';
+T1path = '~/Desktop/S14/Anatomical/T1.nii';
 
 
 % Intensity correction preformed with freesurfer
@@ -132,24 +133,22 @@ delete avol* ravol*
 !gzip meanavol0000_brain
 
 movefile meanavol0000.nii.gz ..
-movefile meanavol0000_brain.nii.gz ..
+%movefile meanavol0000_brain.nii.gz ..
 
 
 %% 4.1 Coregistration fMRI to T1
 % Coregistration fMRI to T1
 
-mkdir Coreg                                                                % create a folder to save coreg outout
-disp('T13D Coregistration to fMRI')
+mkdir('Coreg')                                                                % create a folder to save coreg outout
+% disp('T13D Coregistration to fMRI')
 
-% IF STATEMENT on BET T1_brain --> fmri_brain. T1--> fmri. Be consistent!!!!
-% BET with BET, ALL IMG with ALL IMG
 
 if use_bet
     disp('=== BET procedure ===')
     
-    input_fmri = 'meanvol0000_brain.nii.gz';
+    input_fmri = 'meanavol0000_brain.nii.gz';
     
-    unix(horzcat('flirt -in ',input_fmri,' -ref BET/T1_nu_brain.nii.gz',...
+    unix(horzcat('flirt -in ',input_fmri,' -ref ../BET/T1_nu_brain.nii.gz',...
      ' -o Coreg/meanfMRI2T13D_nu_brain -omat Coreg/meanfMRI2T13D_nu_brain.mat -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -bins 256 -cost normmi -interp trilinear'));
  
     !convert_xfm -omat Coreg/T13D2meanfMRI_nu_brain.mat -inverse Coreg/meanfMRI2T13D_nu_brain.mat 
@@ -176,21 +175,21 @@ disp('T13D Normalization')
 if use_bet
     disp('======= BET procedure =========')
    
-    unix(horzcat('flirt -in BET/T1_nu_brain',' -ref $FSLDIR/data/standard/MNI152_T1_1mm_brain -out Coreg/T13D2MNI1mm_nu_brain -omat Coreg/T13D2MNI1mm_nu_brain.mat -bins 256 -cost normmi -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -interp sinc -sincwidth 9 -sincwindow hanning'));
+    unix(horzcat('flirt -in ../BET/T1_nu_brain',' -ref $FSLDIR/data/standard/MNI152_T1_1mm_brain -out Coreg/T13D2MNI1mm_nu_brain -omat Coreg/T13D2MNI1mm_nu_brain.mat -bins 256 -cost normmi -searchrx -180 180 -searchry -180 180 -searchrz -180 180 -dof 12 -interp sinc -sincwidth 9 -sincwindow hanning'));
     % ALVIN IS 2mm
-    unix(horzcat('fnirt --ref=$FSLDIR/data/standard/MNI152_T1_2mm_brain --in=','BET/T1_nu_brain',' --aff=Coreg/T13D2MNI1mm_nu_brain.mat --config=$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf --cout=Coreg/T13D_warpcoef_nu_brain.nii.gz --iout=Coreg/T13D2MNI_fnirt_nu_brain'));
-    unix(horzcat('invwarp -w Coreg/T13D_warpcoef_nu_brain.nii.gz -o Coreg/MNI_warpcoef_nu_brain.nii.gz -r BET/T1_nu_brain'));
+    unix(horzcat('fnirt --ref=$FSLDIR/data/standard/MNI152_T1_2mm_brain --in=','../BET/T1_nu_brain',' --aff=Coreg/T13D2MNI1mm_nu_brain.mat --config=$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf --cout=Coreg/T13D_warpcoef_nu_brain.nii.gz --iout=Coreg/T13D2MNI_fnirt_nu_brain'));
+    unix(horzcat('invwarp -w Coreg/T13D_warpcoef_nu_brain.nii.gz -o Coreg/MNI_warpcoef_nu_brain.nii.gz -r ../BET/T1_nu_brain'));
     
+else
+    %Normalisation: registration on T1 on the standard MNI space of FSL. 1 mm
+    %MNI because my T1 data are 1mm resolution
+    unix(horzcat('flirt -in ',T1path,' -ref $FSLDIR/data/standard/MNI152_T1_1mm -out Coreg/T13D2MNI1mm -omat Coreg/T13D2MNI1mm.mat -bins 256 -cost normmi -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -dof 12 -interp sinc -sincwidth 7 -sincwindow hanning'));
+    
+    %Non linear Transformation: Normalised image transformed on MNI 2mm
+    %resolution because Alvin mask has that resolution
+    unix(horzcat('fnirt --ref=$FSLDIR/data/standard/MNI152_T1_2mm --in=',T1path,' --aff=Coreg/T13D2MNI1mm.mat --config=$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf --cout=Coreg/T13D_nu_warpcoef.nii.gz --iout=Coreg/T13D2MNI_fnirt'));
 
-%Normalisation: registration on T1 on the standard MNI space of FSL. 1 mm
-%MNI because my T1 data are 1mm resolution
-unix(horzcat('flirt -in ',T1path,' -ref $FSLDIR/data/standard/MNI152_T1_1mm -out Coreg/T13D2MNI1mm -omat Coreg/T13D2MNI1mm.mat -bins 256 -cost normmi -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -dof 12 -interp sinc -sincwidth 7 -sincwindow hanning'));
-
-%Non linear Transformation: Normalised image transformed on MNI 2mm
-%resolution because Alvin mask has that resolution
-unix(horzcat('fnirt --ref=$FSLDIR/data/standard/MNI152_T1_2mm --in=',T1path,' --aff=Coreg/T13D2MNI1mm.mat --config=$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf --cout=Coreg/T13D_nu_warpcoef.nii.gz --iout=Coreg/T13D2MNI_fnirt'));
-
-unix(horzcat('invwarp -w Coreg/T13D_nu_warpcoef.nii.gz -o Coreg/MNI_warpcoef.nii.gz -r ',T1path));
+    unix(horzcat('invwarp -w Coreg/T13D_nu_warpcoef.nii.gz -o Coreg/MNI_warpcoef.nii.gz -r ',T1path));
 end
 
 
@@ -206,23 +205,23 @@ disp('CSF mask creation')
 % fast segmentations output: csf = T1name_pv0; GM = T1name_pv1;
 % WM = T1name_pv2; merged segmentations _pv.
 
-!fast BET/T1_brain
+!fast BET/T1_nu_brain.nii.gz
 
 % % % 4.2.3 CSF-ALVIN COREGISTRATION --------------------------------------
 
-copyfile('BET/T1_brain_pve_0.nii.gz', 'Coreg');                            % copy CSF mask into Coreg folder to have all Coreg files in one directory
-CSFmask = 'Coreg/T1_brain_pve_0.nii.gz';                                   % save csf mask name into CSFmask variable
+copyfile('../BET/T1_nu_brain_pve_0.nii.gz', 'Coreg');                            % copy CSF mask into Coreg folder to have all Coreg files in one directory
+CSFmask = 'Coreg/T1_nu_brain_pve_0.nii.gz';                                   % save csf mask name into CSFmask variable
 
 disp('CSF mask thresholding with Alvin mask in fMRI space')
 
 % applywarp: application of already implemented transformation.
 % e.g. -w = warp; --inter= interpolation with specified function
-unix(horzcat('applywarp -i ~/matlab/Atlases/fMRI/ALVIN_mask_v1 -r ',CSFmask,' -o Coreg/Alvin2CSF -w Coreg/MNI_warpcoef --interp=nn'));
+unix(horzcat('applywarp -i ~/matlab/Atlases/fMRI/ALVIN_mask_v1 -r ',CSFmask,' -o Coreg/Alvin2CSF -w Coreg/MNI_warpcoef_nu_brain --interp=nn'));
 
 % thresholding and eroding to make the Alvin mask fit to my data
 unix(horzcat('fslmaths ',CSFmask,' -mas Coreg/Alvin2CSF -thr 0.99 Coreg/CSF_thr'));
 !fslmaths Coreg/CSF_thr -ero Coreg/CSF_thr
-!flirt -in Coreg/CSF_thr -ref meanavol0000 -o CSF_thr2fMRI -applyxfm -init Coreg/T13D2meanfMRI.mat -interp nearestneighbour
+!flirt -in Coreg/CSF_thr -ref meanavol0000_brain -o CSF_thr2fMRI -applyxfm -init Coreg/T13D2meanfMRI.mat -interp nearestneighbour
 
 %% 5 Nuisance regression and filtering
 % Advance step (upgrade of the standard procedure)

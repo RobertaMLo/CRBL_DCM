@@ -162,61 +162,23 @@ switch step
         %% fMRI 1st level analysis: NORMALIZED DATA MNI152
         sub_dir = fullfile(protDir,sub_id);
         cd(sub_dir)
-        
+
         disp('I am working in:')
         pwd
-        
+
         cd('Functional')
-        
+
         % Normalise the data
         disp('I am Normalizing fMRI 2 MNI 2mm space')
         matlab_folder = '/home/bcc/matlab';
         native_fMRI = 'fMRI_Filtered';
-        
+
         fMRI_MNI_norm_DCM(protDir, matlab_folder, native_fMRI)
-        
+
         % Smooth the data
         disp('I am doing smoothing')
         input_vols = 'Preproc_fMRI/wsplits_mni2mm'; fwhm_width = [6 6 6];
         fMRI_smooth_DCM_job(protDir, input_vols, fwhm_width)
-        
-% %         %%%%%%% TILL HERE
-%         % Create a conditions file to compute the SPM.mat
-%         disp('Creating a conditions file for SPM computation ')
-%         %cd ../
-%         
-%         
-%         file_mat = dir('*.mat');                                           % raw condition file MUST be the only .mat file saved 
-%                                                                            % inside the subject folder
-%         
-%         disp('Loading task file................')
-%         file_mat = file_mat.name
-% 
-%         load(file_mat);
-%         
-% %         %MAYBE THIS PART DELETE FROM THE PIPELINE. SPECIFIC FOR ADNAN AND
-% %         %LETI DATA. FROM NOW I USE THE NEW FILES 4 CONDITIONS
-% %         %Leti data: from 1 to 14
-% %         %Adnan data: from 15 to end
-% %         % 13: typo Error
-% %         % 15 & 16 different names
-% %         if subject <= 12 || subject == 14 || subject >= 18 || subject == 21                                              
-% %             AE_conditions_filemaker(file_mat, cue.SqueezeANDHOLD)
-% %         elseif subject == 13
-% %             AE_conditions_filemaker(file_mat, cue.SqueezeANHOLD)
-% %         elseif subject == 15
-% %             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S1_P5R)
-% %         elseif subject == 16
-% %             AE_conditions_filemaker(file_mat, SqueezeANDHOLD_S2_P5R)
-% %         else                                                               
-% %            AE_conditions_filemaker(file_mat, SqueezeANDHOLD)
-% %         end
-%         
-
-%  
-% %%%%%%% HERE AO_function.....
-% 
-%           AO_conditions_filemaker(file_mat,assigned_struct)
 %         
         disp('Computing SPM.mat ................')
         

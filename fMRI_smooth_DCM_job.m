@@ -37,5 +37,3 @@ mkdir('Preproc_fMRI/swsplits_mni2mm');
 % !gzip -f Preproc_fMRI/swsplits_mni2mm/*.nii
 % !gzip -f Preproc_fMRI/wsplits_mni2mm/*.nii
 
- cd(protDir)
-

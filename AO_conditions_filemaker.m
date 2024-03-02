@@ -1,6 +1,6 @@
 function [] = AO_conditions_filemaker(file_mat,assigned_struct)
 % =========================================================================
-%   Save a .mat file of the experimental condition for AE UCL protocol.
+%   Save a .mat file of the experimental condition for AE0 UCL protocol.
 %   The output file is used as input in "Multiple Conditions" to compute
 %   SPM.mat
 % =========================================================================
@@ -30,12 +30,12 @@ durations = cell(1,1);
 
 
 
-names{1} = 'AO';                                                           % Name of the Experimental condition
+names{1} = 'AObar';                                                        % Name of the Experimental condition: AE, AO, AObar
 onsets{1} = cue.SqueezeANDHOLD.Time;                                       % Onset time: Starting time of task execution.
 durations{1} = zeros(length(cue.SqueezeANDHOLD.Time),1);                   % Duariotion of the condition. 0 because Event-Related design
 
 
-pmod = assigned_struct('name',{''}, 'param' ,{},'poly',{});                  % Fixed structure. See spm GUI
+pmod = assigned_struct('name',{''}, 'param' ,{},'poly',{});                 % Fixed structure. See spm GUI
 %pmod.(condition_number).name{param_number} Here 1 condition (AE) and 1
 %params (squeeze = force level)
 pmod(1).name{1} = 'force';                                                 % Mod param name

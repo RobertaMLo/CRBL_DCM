@@ -1,4 +1,4 @@
-function visuomotor_DCM(protDir, init_subj, nsubj, A_filename, B_filename, C_filename, DCM_filename, estimate)
+function visuomotor_DCM(protDir,A_filename, B_filename, C_filename, DCM_filename, estimate)
 % =========================================================================
 % Protocol to run a DCM analaysis
 % =========================================================================
@@ -91,13 +91,15 @@ end
 % D-matrix (disabled but must be specified)
 d = zeros(nregions,nregions,0);
 
-
-for subject = init_subj:nsubj
+sub_vec = [2 7 8 10 12 13];
+%for subject = init_subj:nsubj
+for subid = 1:length(sub_vec)
+    subject = sub_vec(subid)
     
     disp('*********************    Specifying...    *********************')
     name = sprintf('S%d',subject)
     
-    if isfolder( fullfile(protDir,name,'Functional/stats') )
+    if isfolder( fullfile(protDir,name,'Functional/stats'))
         
         mkdir(fullfile(protDir,name,'Functional/stats/DCM_models') )
         
@@ -110,7 +112,7 @@ for subject = init_subj:nsubj
         f = {
             fullfile(glm_dir,'VOI_M1_BA131_L_1.mat');
             fullfile(glm_dir,'VOI_SMAPMC_BA122_L_1.mat');
-            fullfile(glm_dir,'VOI_SPL_138_L_1.mat');
+            fullfile(glm_dir,'VOI_SPL_BA138_L_1.mat');
             fullfile(glm_dir,'VOI_CC_BA117_L_1.mat');
             fullfile(glm_dir,'VOI_CRBL_R_1.mat')
             fullfile(glm_dir,'VOI_V1_BA15115_RL_1.mat')

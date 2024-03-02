@@ -1,4 +1,6 @@
-% =========================================================================
+
+function []=fMRI_SPM2ndLevel_jobfun(protDir, outputDir, start_subj, nsubj, tcontrast_name)
+
 % SECOND LEVEL ANALYSIS FOR DCM AE_UCL PROTOCOL
 % =========================================================================
 % % Executable file.
@@ -11,13 +13,13 @@
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
 %--------------------------------------------------------------------------
-clc; clear; close all
-
-start_subj = 2;
-nsubj = 14;
-
-protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND_BAR';
-outputDir = fullfile(protDir,'Group_analysis');
+% clc; clear; close all
+% 
+% start_subj = 2;
+% nsubj = 14;
+% 
+% protDir = '/media/bcc/Volume/Analysis/Roberta/DCM/AO_HAND_BAR';
+% outputDir = fullfile(protDir,'Group_analysis');
 
 cont = 1;
 
@@ -29,7 +31,7 @@ for subject=start_subj:nsubj
         contrast{cont,1} = horzcat(fullfile(protDir,name,'Functional','stats','con_0001.nii'),',1');
         cont = cont+1;
     end
-end
+ end
 
 % % MODEL SPECIFICATION ----------------------------------------------------
 matlabbatch{1}.spm.stats.factorial_design.dir = {outputDir};
@@ -57,7 +59,7 @@ matlabbatch{2}.spm.stats.fmri_est.method.Classical = 1;
 
 % % GROUP CONTRAST DEFINITION ---------------------------------------------
 matlabbatch{3}.spm.stats.con.spmmat = {fullfile(outputDir,'SPM.mat')};
-matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'A0b_vs_rest_group';
+matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = tcontrast_name;
 matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
 matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
 matlabbatch{3}.spm.stats.con.delete = 1; %don't delete pre-existent contrast

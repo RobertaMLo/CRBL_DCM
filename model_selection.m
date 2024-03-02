@@ -32,7 +32,7 @@ function GF = model_selection(protDir, GCM_filename)
     
     %Compute subject specific Bayes Factor --------------------------------
     %BFi,j = p(y|mi) - p(y|mj) -----------------------------------------------
-    delta_F = F(:,1)-F(:,2)
+    delta_F = F(:,4)-F(:,5)
     
     
     figure;
@@ -126,17 +126,17 @@ function GF = model_selection(protDir, GCM_filename)
     axis square
     box off
 
-%     figure;
-%     col = [0.6 0.6 0.6];
-%     colormap(col);
-%     bar(bor, 'm');
-%     xlim([0 7])
-%     set(gca, 'xtick', [1 2 3 4 5 6])
-%     title('BOR - p(best model) > 0.5', 'FontSize', 16)
-%     xlabel('model', 'FontSize', 12)
-%     ylabel('Probability', 'FontSize', 12)
-%     axis square
-%     box off
+    figure;
+    col = [0.6 0.6 0.6];
+    colormap(col);
+    bar(bor, 'm');
+    xlim([0 7])
+    set(gca, 'xtick', [1 2 3 4 5 6])
+    title('BOR - p(best model) > 0.5', 'FontSize', 16)
+    xlabel('model', 'FontSize', 12)
+    ylabel('Probability', 'FontSize', 12)
+    axis square
+    box off
 %     
     cd(current_dir)
     

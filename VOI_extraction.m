@@ -1,4 +1,4 @@
-function VOI_extraction(protDir, stats_dir, VOI_name, contr4adj, contr4act, thrs, mask_abs_path, geometry, center, dimension)
+function VOI_extraction(folder4spm_mat, VOI_name, contr4adj, contr4act, thrs, mask_abs_path, geometry, center, dimension)
 %-----------------------------------------------------------------------
 % VOI EXTRACTION PROTOCOL
 % protDir = your subject folder (AO_HAND / AE_P5 )
@@ -11,16 +11,15 @@ function VOI_extraction(protDir, stats_dir, VOI_name, contr4adj, contr4act, thrs
 % Job saved on 19-Jan-2022 11:00:50 by cfg_util (rev $Rev: 7345 $)
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
-% Edited by Gokce, 27 march 2023
+%
 %-----------------------------------------------------------------------
 
-%---matlabbatch{1}.spm.util.voi.spmmat = {fullfile(protDir,'Group_analysis/SPM.mat')};
-matlabbatch{1}.spm.util.voi.spmmat = {fullfile(protDir,stats_dir,'SPM.mat')};
+matlabbatch{1}.spm.util.voi.spmmat = {fullfile(folder4spm_mat,'SPM.mat')};
 matlabbatch{1}.spm.util.voi.adjust = contr4adj;
 matlabbatch{1}.spm.util.voi.session = 1;
 
 % Name of the VOI. Call it name_of_the_region__numberBA__side
-matlabbatch{1}.spm.util.voi.name = VOI_name;
+matlabbatch{1}.spm.util.voi.name = VOI_name;%horzcat('VOI',VOI_name,'_mask.nii'); %fixed name structure for VOI extracted with spm
 
 % -------------------------------------------------------------------------
 % 1) Define threshold on SPM for finding peak
@@ -44,14 +43,25 @@ matlabbatch{1}.spm.util.voi.roi{2}.mask.threshold = 0.5;
 % -------------------------------------------------------------------------
 if strcmp(geometry,'sphere')
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = center;
+    
+    % % if you want to specify center
     %matlabbatch{1}.spm.util.voi.roi{3}.sphere.centre = [-5 -4 50];
+    
+    
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.radius = dimension; %Set it according to the anatomy of region
+    
+    % % Global max inside mask
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.spm = 1;
     matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.global.mask = 'i2';
+    
+    % % Supra Threshold (no sense with mask, maybe with group SPM
     % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.supra.spm = 1 ;
     % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.supra.mask = 'i2';
+    
+    % % Local (nearest) max inside mask
     % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.local.spm = 1;
     % matlabbatch{1}.spm.util.voi.roi{3}.sphere.move.local.mask = 'i2';
+
 elseif strcmp(geometry,'box')
     matlabbatch{1}.spm.util.voi.roi{3}.box.centre = center;
     matlabbatch{1}.spm.util.voi.roi{3}.box.dim = dimension;
@@ -61,7 +71,7 @@ else
     disp('INVALID VALUE FOR GEOMETRY')
 end
 
-matlabbatch{1}.spm.util.voi.expression = 'i1 & i2 & i3';
+matlabbatch{1}.spm.util.voi.expression = 'i1 & i3';
 
 spm_jobman('run',matlabbatch);
 
