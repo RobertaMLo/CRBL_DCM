@@ -22,9 +22,14 @@ function [] = AE_conditions_filemaker(sub_folder, protocol_name, file_mat)
 % -------------------------------------------------------------------------
 %cond_fname = 'conditions.mat';                                             % condition file name. Must be a .mat
 
+
 load(file_mat);
 
 struct_field = cue.SqueezeANDHOLD;
+
+
+%load(file_mat)
+% EHIIIII CIAOOOOO DEVO ESSERE MODIFICATO
 
 
 % Number of conditions is the number of the experimental tasks
